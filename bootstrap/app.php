@@ -11,7 +11,16 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        //
+        // Daftarkan middleware custom
+        $middleware->alias([
+            'role' => \App\Http\Middleware\CheckRole::class,
+            'check.blocked' => \App\Http\Middleware\CheckBlocked::class,
+        ]);
+
+        // Tambahkan CheckBlocked ke semua request web
+        $middleware->web(append: [
+            \App\Http\Middleware\CheckBlocked::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

@@ -2,24 +2,32 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+/**
+ * =====================================================
+ * SEEDER: DatabaseSeeder (Utama)
+ * =====================================================
+ * Menjalankan semua seeder dalam urutan yang benar.
+ * 
+ * Urutan:
+ * 1. UserSeeder   → Buat akun-akun default
+ * 2. StorySeeder  → Import data cerita dari ceritaku
+ * 3. NavbarSeeder → Buat navigasi default
+ * 
+ * Cara menjalankan:
+ * php artisan migrate:fresh --seed
+ * =====================================================
+ */
+
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
 {
-    use WithoutModelEvents;
-
-    /**
-     * Seed the application's database.
-     */
     public function run(): void
     {
-        // User::factory(10)->create();
-
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
+        $this->call([
+            UserSeeder::class,   // 1. Buat akun
+            StorySeeder::class,  // 2. Import cerita
+            NavbarSeeder::class, // 3. Buat navbar
         ]);
     }
 }

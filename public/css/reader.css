@@ -1,0 +1,129 @@
+/* =====================================================
+   CSS READER: reader.css
+   =====================================================
+   Styling untuk halaman baca chapter (fullscreen reader)
+   ===================================================== */
+
+.reader-page { background: var(--bg-main); min-height: 100vh; }
+
+/* Reader Navbar */
+.reader-navbar {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 0.8rem 2rem; background-color: var(--bg-card);
+    border-bottom: 1px solid var(--border-color);
+    box-shadow: var(--shadow-sm); position: sticky; top: 0; z-index: 510;
+}
+.reader-back-btn, .reader-toc-btn {
+    background: none; border: none; color: var(--text-main);
+    font-size: 0.95rem; font-weight: 500; cursor: pointer;
+    display: flex; align-items: center; gap: 0.5rem;
+    padding: 0.6rem 1rem; border-radius: var(--radius-sm);
+    transition: var(--transition); font-family: 'Outfit', sans-serif;
+    text-decoration: none;
+}
+.reader-back-btn:hover, .reader-toc-btn:hover {
+    background-color: var(--bg-accent); color: var(--primary-color);
+}
+.reader-title-mini {
+    font-weight: 600; font-size: 1rem; color: var(--primary-color);
+    max-width: 40%; white-space: nowrap; overflow: hidden;
+    text-overflow: ellipsis; text-align: center;
+}
+
+/* Reader Content */
+.reader-content {
+    max-width: 750px; margin: 0 auto; padding: 3rem 2rem;
+}
+.reader-chapter-title {
+    font-size: 2rem; font-weight: 700; color: var(--primary-dark);
+    margin-bottom: 2rem; text-align: center;
+}
+.reader-chapter-body {
+    font-size: 1.1rem; line-height: 2; color: var(--text-main);
+}
+
+/* Rich Story Content Styles */
+.chapter-content-rich { display: flex; flex-direction: column; gap: 1.5rem; }
+.scene-setting {
+    font-style: italic; color: var(--text-muted); padding: 1rem 1.5rem;
+    background-color: var(--bg-accent); border-left: 4px solid var(--primary-color);
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0; font-size: 1rem; line-height: 1.6;
+}
+.character-intro {
+    background: linear-gradient(135deg, var(--bg-accent), var(--bg-card));
+    border: 1px solid var(--border-color); border-radius: var(--radius-md);
+    padding: 1.5rem; text-align: center;
+}
+.character-intro .char-name {
+    font-size: 1.3rem; font-weight: 700; color: var(--primary-color);
+    margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 1px;
+}
+.character-intro .char-desc {
+    font-size: 0.95rem; color: var(--text-muted); font-style: italic; line-height: 1.6;
+}
+.narration { font-size: 1.05rem; line-height: 2; color: var(--text-main); text-indent: 2rem; }
+.dialogue {
+    display: flex; flex-direction: column; gap: 0.3rem; padding: 1rem 1.5rem;
+    background-color: var(--bg-card); border-radius: var(--radius-md);
+    border: 1px solid var(--border-color); position: relative;
+    margin-left: 1rem; box-shadow: var(--shadow-sm);
+}
+.dialogue::before {
+    content: ''; position: absolute; left: -8px; top: 1.2rem;
+    width: 16px; height: 16px; background-color: var(--bg-card);
+    border-left: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--border-color); transform: rotate(45deg);
+}
+.dialogue .speaker {
+    font-weight: 700; font-size: 0.85rem; color: var(--primary-color);
+    text-transform: uppercase; letter-spacing: 0.5px;
+}
+.dialogue .speech { font-size: 1.05rem; color: var(--text-main); line-height: 1.7; }
+.scene-break {
+    text-align: center; font-size: 1.2rem; color: var(--primary-light);
+    letter-spacing: 0.5rem; padding: 1rem 0;
+}
+
+/* Reader Footer/Nav */
+.reader-nav {
+    display: flex; justify-content: space-between; align-items: center;
+    max-width: 750px; margin: 2rem auto; padding: 0 2rem;
+}
+.reader-nav a, .reader-nav span {
+    padding: 0.7rem 1.5rem; border-radius: 25px;
+    font-size: 0.9rem; font-weight: 500; transition: var(--transition);
+    font-family: 'Outfit', sans-serif; text-decoration: none;
+    display: inline-flex; align-items: center; gap: 0.5rem;
+}
+.reader-nav .nav-prev, .reader-nav .nav-next {
+    border: 1px solid var(--border-color); color: var(--text-main);
+}
+.reader-nav .nav-prev:hover, .reader-nav .nav-next:hover {
+    border-color: var(--primary-color); color: var(--primary-color);
+    background-color: var(--primary-glow);
+}
+.reader-nav .nav-next {
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+    color: #fff; border: none;
+}
+.reader-nav .nav-next:hover {
+    transform: translateY(-2px); box-shadow: 0 4px 12px var(--primary-glow);
+}
+.reader-nav .nav-disabled {
+    opacity: 0.3; pointer-events: none; border: 1px solid var(--border-color);
+    color: var(--text-muted);
+}
+.reader-progress { font-size: 0.85rem; color: var(--text-muted); font-weight: 500; }
+
+/* Responsive */
+@media (max-width: 768px) {
+    .reader-navbar { padding: 0.6rem 1rem; }
+    .reader-content { padding: 2rem 1.2rem; }
+    .reader-chapter-title { font-size: 1.5rem; }
+    .reader-chapter-body { font-size: 1rem; }
+    .dialogue { margin-left: 0; }
+    .dialogue::before { display: none; }
+    .narration { text-indent: 1rem; }
+    .reader-nav { padding: 0 1rem; }
+    .reader-nav a, .reader-nav span { padding: 0.6rem 1rem; font-size: 0.8rem; }
+}

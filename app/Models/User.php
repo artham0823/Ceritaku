@@ -2,7 +2,19 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
+/**
+ * =====================================================
+ * MODEL: User (Pengguna)
+ * =====================================================
+ * Model untuk mengelola data pengguna.
+ * 
+ * Tiga jenis role:
+ * - author : Username 'artham', otoritas tertinggi
+ * - admin  : Dibuat oleh author, bisa kelola konten
+ * - member : Register sendiri, fitur terbatas
+ * =====================================================
+ */
+
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -13,37 +25,134 @@ class User extends Authenticatable
     /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var list<string>
-     */
     protected $fillable = [
         'name',
-        'email',
+        'username',
         'password',
+        'role',
+        'avatar',
+        'title',
+        'bio',
+        'is_blocked',
     ];
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var list<string>
-     */
     protected $hidden = [
         'password',
         'remember_token',
     ];
 
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
     protected function casts(): array
     {
         return [
-            'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'is_blocked' => 'boolean',
         ];
+    }
+
+    // ==========================================
+    // Cek Role
+    // ==========================================
+
+    /** Cek apakah user adalah author (artham) */
+    public function isAuthor(): bool
+    {
+        return $this->role === 'author';
+    }
+
+    /** Cek apakah user adalah admin */
+    public function isAdmin(): bool
+    {
+        return $this->role === 'admin';
+    }
+
+    /** Cek apakah user adalah member */
+    public function isMember(): bool
+    {
+        return $this->role === 'member';
+    }
+
+    /** Cek apakah user bisa mengelola konten (author atau admin) */
+    public function canManageContent(): bool
+    {
+        return $this->isAuthor() || $this->isAdmin();
+    }
+
+    // ==========================================
+    // Limit Komentar per Hari
+    // ==========================================
+
+    /** 
+     * Cek apakah user masih bisa berkomentar hari ini
+     * Author: unlimited, Admin: 10/hari, Member: 3/hari
+     */
+    public function canComment(): bool
+    {
+        if ($this->isAuthor()) return true;
+
+        $todayCount = $this->comments()
+            ->whereDate('created_at', today())
+            ->count();
+
+        $limit = $this->isAdmin() ? 10 : 3;
+        return $todayCount < $limit;
+    }
+
+    /** Hitung sisa komentar hari ini */
+    public function remainingComments(): int|string
+    {
+        if ($this->isAuthor()) return '∞';
+
+        $todayCount = $this->comments()
+            ->whereDate('created_at', today())
+            ->count();
+
+        $limit = $this->isAdmin() ? 10 : 3;
+        return max(0, $limit - $todayCount);
+    }
+
+    // ==========================================
+    // Relasi Database
+    // ==========================================
+
+    /** Cerita yang dibuat oleh user ini */
+    public function stories()
+    {
+        return $this->hasMany(Story::class, 'created_by');
+    }
+
+    /** Komentar yang ditulis oleh user ini */
+    public function comments()
+    {
+        return $this->hasMany(Comment::class);
+    }
+
+    /** Riwayat bacaan user ini */
+    public function readingHistories()
+    {
+        return $this->hasMany(ReadingHistory::class);
+    }
+
+    /** Cerita favorit user ini */
+    public function favorites()
+    {
+        return $this->hasMany(Favorite::class);
+    }
+
+    /** Cerita yang di-like user ini */
+    public function likes()
+    {
+        return $this->hasMany(Like::class);
+    }
+
+    /** Request cerita oleh user ini */
+    public function storyRequests()
+    {
+        return $this->hasMany(StoryRequest::class);
+    }
+
+    /** Notifikasi untuk user ini */
+    public function notifications()
+    {
+        return $this->hasMany(Notification::class);
     }
 }
