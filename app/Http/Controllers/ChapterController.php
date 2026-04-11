@@ -63,6 +63,24 @@ class ChapterController extends Controller
         return view('story.reader', compact('story', 'chapter', 'prevChapter', 'nextChapter', 'comments'));
     }
 
+    /** Simpan/Update Reaksi Bab */
+    public function react(Request $request, $chapterId)
+    {
+        $request->validate([
+            'reaction_type' => 'required|string|in:like,love,cry,wow,laugh'
+        ]);
+
+        $chapter = Chapter::findOrFail($chapterId);
+        $user = auth()->user();
+
+        \App\Models\ChapterReaction::updateOrCreate(
+            ['chapter_id' => $chapter->id, 'user_id' => $user->id],
+            ['reaction_type' => $request->reaction_type]
+        );
+
+        return back()->with('success', 'Reaksi berhasil disimpan!');
+    }
+
     /** Form tambah chapter baru */
     public function create($storyId)
     {

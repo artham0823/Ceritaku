@@ -47,7 +47,8 @@
             </form>
 
             <div class="auth-footer">
-                Belum punya akun? <a href="{{ route('register') }}">Daftar sekarang</a>
+                Belum punya akun? <a href="{{ route('register') }}">Daftar sekarang</a><br><br>
+                <a href="{{ route('home') }}" style="display:inline-block; margin-top:0.5rem; text-decoration:none; color:var(--text-muted);"><i class="fa-solid fa-arrow-left"></i> Kembali ke Beranda</a>
             </div>
         </div>
     </div>

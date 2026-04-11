@@ -30,8 +30,8 @@ class StorySeeder extends Seeder
         $author = User::where('username', 'artham')->first();
         $authorId = $author ? $author->id : 1;
 
-        // Baca file JSON dari folder ceritaku
-        $jsonPath = base_path('../ceritaku/assets/data/stories.json');
+        // Baca file JSON dari database/data
+        $jsonPath = database_path('data/stories.json');
         
         if (!file_exists($jsonPath)) {
             $this->command->warn('File stories.json tidak ditemukan! Menggunakan data hardcoded...');

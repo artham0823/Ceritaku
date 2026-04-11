@@ -81,8 +81,11 @@
                         <i class="fa-solid fa-bell"></i> Notifikasi
                     </a>
                 @endif
-            </nav>
+        </nav>
             <div class="dash-sidebar-footer">
+                <a href="{{ route('home') }}" class="btn btn-outline" style="width:100%;justify-content:center;margin-bottom:0.8rem">
+                    <i class="fa-solid fa-home"></i> Ke Beranda
+                </a>
                 <form action="{{ route('logout') }}" method="POST">
                     @csrf
                     <button type="submit" class="btn btn-outline" style="width:100%;justify-content:center">

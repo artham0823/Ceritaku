@@ -78,12 +78,41 @@ class User extends Authenticatable
     }
 
     // ==========================================
+    // Gamifikasi & Leveling
+    // ==========================================
+
+    /** Dapatkan Level pembaca berdasarkan total riwayat baca */
+    public function getLevelName(): string
+    {
+        if ($this->isAuthor() || $this->isAdmin()) {
+            return 'Pustakawan Royal';
+        }
+
+        $count = $this->readingHistories()->count();
+        if ($count >= 50) return 'Perpustakaan Berjalan';
+        if ($count >= 20) return 'Kutu Buku';
+        return 'Pembaca Baru';
+    }
+
+    /** Dapatkan batas harian komentar berdasarkan level */
+    public function getCommentLimit(): int
+    {
+        if ($this->isAdmin()) return 10;
+        
+        $level = $this->getLevelName();
+        if ($level === 'Perpustakaan Berjalan') return 7;
+        if ($level === 'Kutu Buku') return 5;
+        
+        return 3;
+    }
+
+    // ==========================================
     // Limit Komentar per Hari
     // ==========================================
 
     /** 
      * Cek apakah user masih bisa berkomentar hari ini
-     * Author: unlimited, Admin: 10/hari, Member: 3/hari
+     * Author: unlimited, Admin: 10/hari, Member: bervariasi tergantung level
      */
     public function canComment(): bool
     {
@@ -93,8 +122,7 @@ class User extends Authenticatable
             ->whereDate('created_at', today())
             ->count();
 
-        $limit = $this->isAdmin() ? 10 : 3;
-        return $todayCount < $limit;
+        return $todayCount < $this->getCommentLimit();
     }
 
     /** Hitung sisa komentar hari ini */
@@ -106,8 +134,7 @@ class User extends Authenticatable
             ->whereDate('created_at', today())
             ->count();
 
-        $limit = $this->isAdmin() ? 10 : 3;
-        return max(0, $limit - $todayCount);
+        return max(0, $this->getCommentLimit() - $todayCount);
     }
 
     // ==========================================

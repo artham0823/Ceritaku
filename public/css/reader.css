@@ -127,3 +127,42 @@
     .reader-nav { padding: 0 1rem; }
     .reader-nav a, .reader-nav span { padding: 0.6rem 1rem; font-size: 0.8rem; }
 }
+
+/* Immersive Reader Settings */
+.reader-page.theme-sepia {
+    --bg-main: #f4ecd8;
+    --bg-card: #e8dcc4;
+    --bg-accent: #dccba8;
+    --text-main: #4a3c31;
+    --text-muted: #8b7a65;
+    --border-color: #d1bfae;
+}
+.reader-page.font-serif .reader-chapter-body {
+    font-family: 'Merriweather', 'Georgia', serif;
+}
+.reader-page.font-sans .reader-chapter-body {
+    font-family: 'Outfit', sans-serif;
+}
+.reader-page.size-sm .reader-chapter-body { font-size: 0.875rem; line-height: 1.8; }
+.reader-page.size-md .reader-chapter-body { font-size: 1rem; line-height: 2; }
+.reader-page.size-lg .reader-chapter-body { font-size: 1.25rem; line-height: 2.2; }
+
+.reader-settings-dropdown {
+    position: absolute; top: 100%; right: 2rem; background: var(--bg-card);
+    border: 1px solid var(--border-color); border-radius: var(--radius-md);
+    box-shadow: var(--shadow-md); padding: 1.5rem; z-index: 600;
+    min-width: 250px; display: none; margin-top: 0.5rem;
+}
+.reader-settings-dropdown.show { display: block; }
+.setting-group { margin-bottom: 1.2rem; }
+.setting-group:last-child { margin-bottom: 0; }
+.setting-group label { display: block; font-size: 0.85rem; font-weight: 600; color: var(--text-muted); margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 1px; }
+.setting-options { display: flex; gap: 0.5rem; }
+.setting-btn {
+    flex: 1; padding: 0.5rem; border: 1px solid var(--border-color);
+    background: var(--bg-main); color: var(--text-main); border-radius: var(--radius-sm);
+    cursor: pointer; font-size: 0.85rem; font-family: 'Outfit', sans-serif;
+    transition: var(--transition); text-align: center; font-weight: 600;
+}
+.setting-btn:hover { border-color: var(--primary-light); color: var(--primary-color); }
+.setting-btn.active { background: var(--primary-color); color: white; border-color: var(--primary-color); }

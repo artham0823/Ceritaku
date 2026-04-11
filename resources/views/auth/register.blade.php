@@ -48,7 +48,8 @@
             </form>
 
             <div class="auth-footer">
-                Sudah punya akun? <a href="{{ route('login') }}">Masuk</a>
+                Sudah punya akun? <a href="{{ route('login') }}">Masuk</a><br><br>
+                <a href="{{ route('home') }}" style="display:inline-block; margin-top:0.5rem; text-decoration:none; color:var(--text-muted);"><i class="fa-solid fa-arrow-left"></i> Kembali ke Beranda</a>
             </div>
         </div>
     </div>

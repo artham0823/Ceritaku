@@ -34,14 +34,23 @@ class StoryController extends Controller
         // Cek apakah user sudah login dan sudah like/favorit
         $isLiked = false;
         $isFavorited = false;
+        $readProgress = 0;
         if (auth()->check()) {
             $isLiked = $story->likes()->where('user_id', auth()->id())->exists();
             $isFavorited = $story->favorites()->where('user_id', auth()->id())->exists();
+            
+            if ($story->chapters->count() > 0) {
+                $readChapters = \App\Models\ReadingHistory::where('user_id', auth()->id())
+                    ->where('story_id', $story->id)
+                    ->distinct('chapter_id')
+                    ->count('chapter_id');
+                $readProgress = round(($readChapters / $story->chapters->count()) * 100);
+            }
         } else {
             $isLiked = $story->likes()->where('ip_address', request()->ip())->exists();
         }
 
-        return view('story.show', compact('story', 'isLiked', 'isFavorited'));
+        return view('story.show', compact('story', 'isLiked', 'isFavorited', 'readProgress'));
     }
 
     /** Daftar cerita di dashboard (author/admin) */

@@ -35,6 +35,7 @@ Route::get('/popular', [HomeController::class, 'popular'])->name('popular');
 Route::get('/search', [HomeController::class, 'search'])->name('search');
 Route::get('/story/{id}', [StoryController::class, 'show'])->name('story.show');
 Route::get('/story/{storyId}/chapter/{chapterId}', [ChapterController::class, 'show'])->name('chapter.show');
+Route::get('/u/{id}', [ProfileController::class, 'show'])->name('profile.show');
 
 // Like (bisa tanpa login — guest pakai IP)
 Route::post('/like/{storyId}', [LikeController::class, 'toggleLike'])->name('like.toggle');
@@ -58,6 +59,9 @@ Route::middleware('auth')->group(function () {
 
     // Request cerita
     Route::post('/story-request', [StoryRequestController::class, 'store'])->name('story-request.store');
+
+    // Reaksi Chapter
+    Route::post('/chapter/{chapterId}/react', [ChapterController::class, 'react'])->name('chapter.react');
 
     // Favorit
     Route::post('/favorite/{storyId}', [LikeController::class, 'toggleFavorite'])->name('favorite.toggle');

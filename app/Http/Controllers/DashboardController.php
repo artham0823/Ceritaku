@@ -56,10 +56,27 @@ class DashboardController extends Controller
             ->limit(5)
             ->get();
 
+        // Chart Data: Cerita berdasarkan Genre
+        $genreStats = Story::selectRaw('genre, count(*) as count')->groupBy('genre')->pluck('count', 'genre')->toArray();
+        $genreLabels = array_keys($genreStats);
+        $genreData = array_values($genreStats);
+
+        // Chart Data: Aktivitas Baca (7 hari terakhir)
+        $readingStats = \App\Models\ReadingHistory::selectRaw('DATE(read_at) as date, count(*) as count')
+            ->groupBy('date')
+            ->orderBy('date', 'desc')
+            ->limit(7)
+            ->pluck('count', 'date')
+            ->toArray();
+        $readingStats = array_reverse($readingStats); // Urut dari terlama ke terbaru dalam 7 hari
+        $readingLabels = array_keys($readingStats);
+        $readingData = array_values($readingStats);
+
         return view('dashboard.index', compact(
             'user', 'totalStories', 'totalChapters', 'totalComments',
             'totalMembers', 'totalAdmins', 'pendingRequests',
-            'notifications', 'recentComments'
+            'notifications', 'recentComments',
+            'genreLabels', 'genreData', 'readingLabels', 'readingData'
         ));
     }
 
@@ -92,10 +109,17 @@ class DashboardController extends Controller
     private function memberDashboard()
     {
         $user = auth()->user();
-        $readingHistory = $user->readingHistories()
+
+        $totalStoriesRead = $user->readingHistories()->distinct('story_id')->count('story_id');
+
+        $latestIds = $user->readingHistories()
+            ->selectRaw('MAX(id) as id')
+            ->groupBy('story_id');
+
+        $readingHistory = \App\Models\ReadingHistory::whereIn('id', $latestIds)
             ->with(['story', 'chapter'])
             ->orderByDesc('read_at')
-            ->limit(20)
+            ->limit(6)
             ->get();
 
         $favorites = $user->favorites()
@@ -103,7 +127,10 @@ class DashboardController extends Controller
             ->orderByDesc('created_at')
             ->get();
 
-        return view('dashboard.index', compact('user', 'readingHistory', 'favorites'));
+        $userComments = $user->comments()->with('chapter.story')->orderByDesc('created_at')->limit(5)->get();
+        $userRequests = $user->storyRequests()->orderByDesc('created_at')->limit(5)->get();
+
+        return view('dashboard.index', compact('user', 'totalStoriesRead', 'readingHistory', 'favorites', 'userComments', 'userRequests'));
     }
 
     /** Halaman semua komentar (author/admin) */
@@ -139,7 +166,12 @@ class DashboardController extends Controller
     /** Halaman riwayat bacaan */
     public function history()
     {
-        $readingHistory = auth()->user()->readingHistories()
+        $user = auth()->user();
+        $latestIds = $user->readingHistories()
+            ->selectRaw('MAX(id) as id')
+            ->groupBy('story_id');
+
+        $readingHistory = \App\Models\ReadingHistory::whereIn('id', $latestIds)
             ->with(['story', 'chapter'])
             ->orderByDesc('read_at')
             ->paginate(20);

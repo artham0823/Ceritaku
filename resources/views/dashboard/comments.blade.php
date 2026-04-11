@@ -12,7 +12,7 @@
         <tbody>
             @forelse($comments as $comment)
                 <tr>
-                    <td><strong>{{ $comment->user->name }}</strong> <span class="comment-role {{ $comment->user->role }}">{{ ucfirst($comment->user->role) }}</span></td>
+                    <td><strong><a href="{{ route('profile.show', $comment->user->id) }}" style="text-decoration:none; color:inherit;">{{ $comment->user->name }}</a></strong> <span class="comment-role {{ $comment->user->role }}">{{ ucfirst($comment->user->role) }}</span></td>
                     <td>{{ $comment->chapter->story->title ?? '-' }}</td>
                     <td>{{ $comment->chapter->title ?? '-' }}</td>
                     <td>{{ Str::limit($comment->content, 80) }}</td>

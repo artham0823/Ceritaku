@@ -8,13 +8,12 @@
 
 <div class="dash-card" style="overflow-x:auto">
     <table class="dash-table">
-        <thead><tr><th>Avatar</th><th>Nama</th><th>Username</th><th>Status</th><th>Bergabung</th><th>Aksi</th></tr></thead>
+        <thead><tr><th>Avatar</th><th>Nama</th><th>Status</th><th>Bergabung</th><th>Aksi</th></tr></thead>
         <tbody>
             @forelse($members as $member)
                 <tr>
                     <td><img src="{{ asset($member->avatar ?? 'img/p2.jpg') }}" alt="" style="width:35px;height:35px;border-radius:50%;object-fit:cover"></td>
-                    <td><strong>{{ $member->name }}</strong></td>
-                    <td>{{ $member->username }}</td>
+                    <td><strong><a href="{{ route('profile.show', $member->id) }}" style="text-decoration:none; color:inherit;">{{ $member->name }}</a></strong></td>
                     <td>
                         @if($member->is_blocked)
                             <span class="status-badge status-blocked">Diblokir</span>

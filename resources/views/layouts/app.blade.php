@@ -218,6 +218,21 @@
         if (sidebarCloseBtn) sidebarCloseBtn.addEventListener('click', closeSidebar);
         if (sidebarBackdrop) sidebarBackdrop.addEventListener('click', closeSidebar);
 
+        // Profile Dropdown Toggle
+        const profileImg = document.querySelector('.nav-user-menu img');
+        const userDropdown = document.querySelector('.nav-user-dropdown');
+        if (profileImg && userDropdown) {
+            profileImg.addEventListener('click', (e) => {
+                e.stopPropagation();
+                userDropdown.classList.toggle('show');
+            });
+            document.addEventListener('click', (e) => {
+                if (!userDropdown.contains(e.target)) {
+                    userDropdown.classList.remove('show');
+                }
+            });
+        }
+
         // Anti-copy pada area cerita
         document.querySelectorAll('.no-copy').forEach(el => {
             el.addEventListener('contextmenu', e => e.preventDefault());

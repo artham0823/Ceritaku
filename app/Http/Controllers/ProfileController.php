@@ -19,6 +19,17 @@ use App\Models\Notification;
 
 class ProfileController extends Controller
 {
+    /** Detail profil publik */
+    public function show($id)
+    {
+        $user = User::findOrFail($id);
+        
+        $recentComments = $user->comments()->with('chapter.story')->orderByDesc('created_at')->limit(5)->get();
+        $authoredStories = $user->stories()->withCount('chapters')->orderByDesc('created_at')->get();
+        
+        return view('profile.show', compact('user', 'recentComments', 'authoredStories'));
+    }
+
     /** Form edit profil */
     public function edit()
     {

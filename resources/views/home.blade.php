@@ -2,6 +2,7 @@
 @section('title', 'Ceritaku - Platform Cerita Digital')
 
 @section('content')
+<div class="no-copy">
     {{-- Hero Section --}}
     @if($featuredStory)
     <section class="hero-section">
@@ -76,4 +77,5 @@
             @endforelse
         </div>
     </section>
+</div>
 @endsection

@@ -3,7 +3,7 @@
 
 @section('content')
 <section class="container" style="min-height:60vh;padding-top:2rem;margin-bottom:3rem">
-    <a href="{{ url()->previous() }}" class="back-btn"><i class="fa-solid fa-arrow-left"></i> Kembali</a>
+    <a href="{{ route('home') }}" class="back-btn"><i class="fa-solid fa-arrow-left"></i> Kembali ke Beranda</a>
 
     <div class="story-detail-header">
         <img src="{{ asset($story->cover_image ?? 'img/p2.jpg') }}" alt="{{ $story->title }}">
@@ -14,9 +14,25 @@
                 <span><i class="fa-solid fa-layer-group"></i> {{ $story->chapters->count() }} Bab</span>
                 <span><i class="fa-solid fa-eye"></i> {{ number_format($story->views_count) }} Dilihat</span>
                 <span><i class="fa-solid fa-heart"></i> {{ $story->likes_count }} Like</span>
-                <span><i class="fa-solid fa-user"></i> {{ $story->creator->name ?? 'Anonim' }}</span>
+                @if($story->creator)
+                    <a href="{{ route('profile.show', $story->creator->id) }}" style="text-decoration: none; color: inherit; transition: color 0.3s;" onmouseover="this.style.color='var(--primary-color)'" onmouseout="this.style.color='inherit'"><i class="fa-solid fa-user"></i> {{ $story->creator->name }}</a>
+                @else
+                    <span><i class="fa-solid fa-user"></i> Anonim</span>
+                @endif
             </div>
             <p>{{ $story->description }}</p>
+
+            @auth
+            <div style="margin-top: 1rem; margin-bottom: 1.5rem; background: var(--bg-main); border: 1px solid var(--border-color); padding: 0.8rem; border-radius: var(--radius-sm);">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem; font-size: 0.9rem; font-weight: 600;">
+                    <span>Progress Membaca</span>
+                    <span style="color: var(--primary-color);">Sudah dibaca {{ $readProgress }}%</span>
+                </div>
+                <div style="width: 100%; background: var(--bg-accent); height: 8px; border-radius: 4px; overflow: hidden;">
+                    <div style="width: {{ $readProgress }}%; background: var(--primary-color); height: 100%; border-radius: 4px; border-top-right-radius: {{ $readProgress == 100 ? '4px' : '0' }}; border-bottom-right-radius: {{ $readProgress == 100 ? '4px' : '0' }}; transition: width 0.5s ease;"></div>
+                </div>
+            </div>
+            @endauth
 
             <div class="story-actions">
                 @if($story->chapters->count() > 0)

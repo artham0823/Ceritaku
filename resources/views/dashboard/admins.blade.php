@@ -36,12 +36,11 @@
 <div class="dash-card" style="overflow-x:auto">
     <h3><i class="fa-solid fa-user-shield"></i> Daftar Admin</h3>
     <table class="dash-table">
-        <thead><tr><th>Nama</th><th>Username</th><th>Status</th><th>Bergabung</th><th>Aksi</th></tr></thead>
+        <thead><tr><th>Nama</th><th>Status</th><th>Bergabung</th><th>Aksi</th></tr></thead>
         <tbody>
             @forelse($admins as $admin)
                 <tr>
-                    <td><strong>{{ $admin->name }}</strong></td>
-                    <td>{{ $admin->username }}</td>
+                    <td><strong><a href="{{ route('profile.show', $admin->id) }}" style="text-decoration:none; color:inherit;">{{ $admin->name }}</a></strong></td>
                     <td>
                         @if($admin->is_blocked)
                             <span class="status-badge status-blocked">Diblokir</span>
