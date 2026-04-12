@@ -152,7 +152,9 @@
 
             @foreach($comments as $comment)
                 <div class="comment-item">
-                    <img src="{{ asset($comment->user->avatar ?? 'img/p2.jpg') }}" alt="" class="comment-avatar">
+                    <a href="{{ route('profile.show', $comment->user->id) }}">
+                        <img src="{{ asset($comment->user->avatar ?? 'img/p2.jpg') }}" alt="" class="comment-avatar">
+                    </a>
                     <div class="comment-body">
                         <div class="comment-header">
                             <div>
@@ -211,8 +213,38 @@
         });
 
         // Load settings from localStorage
-        const defaults = { theme: 'light', font: 'sans', size: 'md' };
-        const savedSettings = JSON.parse(localStorage.getItem('readerSettings')) || defaults;
+        const globalTheme = localStorage.getItem('ceritaku-theme');
+        const defaults = { theme: globalTheme === 'dark' ? 'dark' : 'light', font: 'sans', size: 'md' };
+        let savedSettings = JSON.parse(localStorage.getItem('readerSettings'));
+        if (!savedSettings) {
+            savedSettings = defaults;
+        } else {
+            // Sinkronisasi tema global dengan tema reader jika bertabrakan
+            if (globalTheme === 'dark' && savedSettings.theme !== 'dark') savedSettings.theme = 'dark';
+            else if (globalTheme === 'light' && savedSettings.theme === 'dark') savedSettings.theme = 'light';
+        }
+
+        // Fullscreen reading mode (hide navbars on click)
+        const mainNavbar = document.getElementById('main-navbar');
+        const readerNavbarLocal = document.querySelector('.reader-navbar');
+        
+        document.addEventListener('click', (e) => {
+            if (mainNavbar && mainNavbar.contains(e.target)) return;
+            if (readerNavbarLocal && readerNavbarLocal.contains(e.target)) return;
+            
+            // Jangan hide jika mengklik tombol, link, form, area komentar, setting, atau interaksi lainnya
+            if (e.target.closest('button, a, input, textarea, form, .comment-section, .reactions-container, .reader-settings-dropdown')) return;
+
+            // Toggle sembunyikan navbar
+            const isHidden = document.body.classList.toggle('hide-navs');
+            if (isHidden) {
+                if (mainNavbar) mainNavbar.style.display = 'none';
+                if (readerNavbarLocal) readerNavbarLocal.style.display = 'none';
+            } else {
+                if (mainNavbar) mainNavbar.style.display = '';
+                if (readerNavbarLocal) readerNavbarLocal.style.display = '';
+            }
+        });
 
         // Note: For 'dark' theme, we use body dark-theme. For 'sepia', we apply to reader-page.
         function applySettings(settings) {

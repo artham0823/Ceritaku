@@ -119,7 +119,7 @@ ul { list-style: none; }
     box-shadow: var(--shadow-sm);
     position: sticky;
     top: 0;
-    z-index: 100;
+    z-index: 999;
     transition: var(--transition);
 }
 

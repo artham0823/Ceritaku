@@ -157,6 +157,17 @@
                         <li><a href="{{ route('register') }}">Daftar</a></li>
                     @endauth
                 </ul>
+                <ul>
+                    <li><strong>Hubungi Author</strong></li>
+                    <li><a href="https://wa.me/6285707298084" target="_blank" title="085707298084"><i class="fa-brands fa-whatsapp"></i> WhatsApp</a></li>
+                    <li><a href="https://instagram.com/artham_.26" target="_blank"><i class="fa-brands fa-instagram"></i> Instagram (@artham_.26)</a></li>
+                    <li><a href="https://tiktok.com/@ad_ryuu" target="_blank"><i class="fa-brands fa-tiktok"></i> TikTok (@ad_ryuu)</a></li>
+                    <li><span style="color:var(--text-muted);font-size:0.95rem;display:flex;align-items:center;gap:0.5rem;"><i class="fa-brands fa-discord"></i> Discord: artham_26</span></li>
+                    <li style="margin-top: 0.5rem;">
+                        <span style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.3rem;">Scan WA:</span>
+                        <img src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=https://wa.me/6285707298084" alt="WA Barcode" style="border-radius: 8px; box-shadow: var(--shadow-sm); border: 2px solid white;">
+                    </li>
+                </ul>
             </div>
         </div>
         <div class="copyright">
