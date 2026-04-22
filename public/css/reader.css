@@ -1,54 +1,99 @@
 /* =====================================================
    CSS READER: reader.css
    =====================================================
-   Styling untuk halaman baca chapter (fullscreen reader)
+   Styling untuk halaman baca chapter (immersive reader).
+   
+   Bagian-bagian:
+   - Reader navbar (navigasi atas saat baca)
+   - Konten cerita (teks, dialog, narasi)
+   - Pengaturan baca (tema, font, ukuran)
+   - Navigasi chapter (prev/next)
+   - Tema immersive: Light, Dark, Sepia, Neon
+   - Responsive mobile
    ===================================================== */
 
-.reader-page { background: var(--bg-main); min-height: 100vh; }
-
-/* Reader Navbar */
-.reader-navbar {
-    display: flex; justify-content: space-between; align-items: center;
-    padding: 0.8rem 2rem; background-color: var(--bg-card);
-    border-bottom: 1px solid var(--border-color);
-    box-shadow: var(--shadow-sm); position: sticky; top: 0; z-index: 510;
+/* =====================================================
+   READER PAGE — Container utama halaman baca
+   ===================================================== */
+.reader-page {
+    background: var(--bg-main);
+    min-height: 100vh;
 }
+
+/* =====================================================
+   READER NAVBAR — Navigasi atas saat membaca
+   Berisi: tombol kembali, judul chapter, pengaturan baca
+   ===================================================== */
+.reader-navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.8rem 2rem;
+    background-color: var(--bg-card);
+    border-bottom: 1px solid var(--border-color);
+    box-shadow: var(--shadow-sm);
+    position: sticky;
+    top: 0;
+    z-index: 510;
+    gap: 0.5rem;
+}
+
+/* Tombol kembali ke halaman cerita */
 .reader-back-btn, .reader-toc-btn {
     background: none; border: none; color: var(--text-main);
     font-size: 0.95rem; font-weight: 500; cursor: pointer;
     display: flex; align-items: center; gap: 0.5rem;
     padding: 0.6rem 1rem; border-radius: var(--radius-sm);
     transition: var(--transition); font-family: 'Outfit', sans-serif;
-    text-decoration: none;
+    text-decoration: none; white-space: nowrap; flex-shrink: 0;
 }
 .reader-back-btn:hover, .reader-toc-btn:hover {
     background-color: var(--bg-accent); color: var(--primary-color);
 }
+
+/* Judul chapter mini di tengah navbar */
 .reader-title-mini {
     font-weight: 600; font-size: 1rem; color: var(--primary-color);
     max-width: 40%; white-space: nowrap; overflow: hidden;
     text-overflow: ellipsis; text-align: center;
+    flex: 1; min-width: 0;
 }
 
-/* Reader Content */
+/* =====================================================
+   READER CONTENT — Area teks cerita utama
+   ===================================================== */
 .reader-content {
     max-width: 750px; margin: 0 auto; padding: 3rem 2rem;
 }
+
+/* Judul chapter di atas konten */
 .reader-chapter-title {
     font-size: 2rem; font-weight: 700; color: var(--primary-dark);
     margin-bottom: 2rem; text-align: center;
 }
+
+/* Teks utama cerita */
 .reader-chapter-body {
-    font-size: 1.1rem; line-height: 2; color: var(--text-main);
+    font-size: 1.05rem; line-height: 2; color: var(--text-main);
 }
 
-/* Rich Story Content Styles */
+/* =====================================================
+   RICH STORY CONTENT STYLES
+   Gaya khusus untuk konten cerita yang kaya
+   (dialog, narasi, intro karakter, scene setting).
+   ===================================================== */
+
+/* Container konten cerita */
 .chapter-content-rich { display: flex; flex-direction: column; gap: 1.5rem; }
+
+/* Deskripsi setting/lingkungan cerita (miring, border kiri orange) */
 .scene-setting {
     font-style: italic; color: var(--text-muted); padding: 1rem 1.5rem;
     background-color: var(--bg-accent); border-left: 4px solid var(--primary-color);
     border-radius: 0 var(--radius-sm) var(--radius-sm) 0; font-size: 1rem; line-height: 1.6;
 }
+
+/* Intro karakter baru (card tengah) */
 .character-intro {
     background: linear-gradient(135deg, var(--bg-accent), var(--bg-card));
     border: 1px solid var(--border-color); border-radius: var(--radius-md);
@@ -61,30 +106,41 @@
 .character-intro .char-desc {
     font-size: 0.95rem; color: var(--text-muted); font-style: italic; line-height: 1.6;
 }
+
+/* Teks narasi biasa */
 .narration { font-size: 1.05rem; line-height: 2; color: var(--text-main); text-indent: 2rem; }
+
+/* Dialog karakter (bubble chat dengan segitiga kiri) */
 .dialogue {
     display: flex; flex-direction: column; gap: 0.3rem; padding: 1rem 1.5rem;
     background-color: var(--bg-card); border-radius: var(--radius-md);
     border: 1px solid var(--border-color); position: relative;
     margin-left: 1rem; box-shadow: var(--shadow-sm);
 }
+/* Segitiga di kiri bubble dialog */
 .dialogue::before {
     content: ''; position: absolute; left: -8px; top: 1.2rem;
     width: 16px; height: 16px; background-color: var(--bg-card);
     border-left: 1px solid var(--border-color);
     border-bottom: 1px solid var(--border-color); transform: rotate(45deg);
 }
+/* Nama pembicara */
 .dialogue .speaker {
     font-weight: 700; font-size: 0.85rem; color: var(--primary-color);
     text-transform: uppercase; letter-spacing: 0.5px;
 }
+/* Teks ucapan */
 .dialogue .speech { font-size: 1.05rem; color: var(--text-main); line-height: 1.7; }
+
+/* Pemisah scene (tanda bintang) */
 .scene-break {
     text-align: center; font-size: 1.2rem; color: var(--primary-light);
     letter-spacing: 0.5rem; padding: 1rem 0;
 }
 
-/* Reader Footer/Nav */
+/* =====================================================
+   READER NAVIGATION — Tombol Prev/Next Chapter
+   ===================================================== */
 .reader-nav {
     display: flex; justify-content: space-between; align-items: center;
     max-width: 750px; margin: 2rem auto; padding: 0 2rem;
@@ -95,6 +151,7 @@
     font-family: 'Outfit', sans-serif; text-decoration: none;
     display: inline-flex; align-items: center; gap: 0.5rem;
 }
+/* Tombol sebelumnya */
 .reader-nav .nav-prev, .reader-nav .nav-next {
     border: 1px solid var(--border-color); color: var(--text-main);
 }
@@ -102,6 +159,7 @@
     border-color: var(--primary-color); color: var(--primary-color);
     background-color: var(--primary-glow);
 }
+/* Tombol selanjutnya (highlight orange) */
 .reader-nav .nav-next {
     background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
     color: #fff; border: none;
@@ -109,26 +167,18 @@
 .reader-nav .nav-next:hover {
     transform: translateY(-2px); box-shadow: 0 4px 12px var(--primary-glow);
 }
+/* Tombol disabled (tidak ada prev/next) */
 .reader-nav .nav-disabled {
     opacity: 0.3; pointer-events: none; border: 1px solid var(--border-color);
     color: var(--text-muted);
 }
+/* Label progress "Bab X dari Y" */
 .reader-progress { font-size: 0.85rem; color: var(--text-muted); font-weight: 500; }
 
-/* Responsive */
-@media (max-width: 768px) {
-    .reader-navbar { padding: 0.6rem 1rem; }
-    .reader-content { padding: 2rem 1.2rem; }
-    .reader-chapter-title { font-size: 1.5rem; }
-    .reader-chapter-body { font-size: 1rem; }
-    .dialogue { margin-left: 0; }
-    .dialogue::before { display: none; }
-    .narration { text-indent: 1rem; }
-    .reader-nav { padding: 0 1rem; }
-    .reader-nav a, .reader-nav span { padding: 0.6rem 1rem; font-size: 0.8rem; }
-}
-
-/* Immersive Reader Settings */
+/* =====================================================
+   IMMERSIVE READER — TEMA SEPIA
+   Warna kekuningan seperti kertas tua, nyaman dibaca.
+   ===================================================== */
 .reader-page.theme-sepia {
     --bg-main: #f4ecd8;
     --bg-card: #e8dcc4;
@@ -136,33 +186,186 @@
     --text-main: #4a3c31;
     --text-muted: #8b7a65;
     --border-color: #d1bfae;
+    --primary-color: #c77d3a;
+    --primary-dark: #a5652e;
+    --primary-glow: rgba(199, 125, 58, 0.15);
 }
-.reader-page.font-serif .reader-chapter-body {
+
+/* =====================================================
+   IMMERSIVE READER — TEMA NEON
+   Warna cyberpunk / neon glow, efek futuristik.
+   Background gelap dengan aksen neon hijau-cyan.
+   ===================================================== */
+.reader-page.theme-neon {
+    --bg-main: #0a0a0f;
+    --bg-card: #12121a;
+    --bg-accent: #1a1a2e;
+    --text-main: #e0e0ff;
+    --text-muted: #8888bb;
+    --border-color: #2a2a4a;
+    --primary-color: #00ffcc;
+    --primary-light: #66ffd9;
+    --primary-dark: #00cc99;
+    --primary-glow: rgba(0, 255, 204, 0.15);
+    --shadow-sm: 0 4px 6px rgba(0, 255, 204, 0.05);
+    --shadow-md: 0 10px 20px rgba(0, 255, 204, 0.08);
+}
+/* Efek glow neon pada judul chapter */
+.reader-page.theme-neon .reader-chapter-title {
+    text-shadow: 0 0 20px rgba(0, 255, 204, 0.3), 0 0 40px rgba(0, 255, 204, 0.1);
+}
+/* Glow efek pada bubble dialog di mode neon */
+.reader-page.theme-neon .dialogue {
+    border-color: rgba(0, 255, 204, 0.2);
+    box-shadow: 0 0 15px rgba(0, 255, 204, 0.05);
+}
+/* Scene setting neon */
+.reader-page.theme-neon .scene-setting {
+    border-left-color: #00ffcc;
+}
+/* Karakter intro neon */
+.reader-page.theme-neon .character-intro {
+    background: linear-gradient(135deg, #1a1a2e, #12121a);
+    border-color: rgba(0, 255, 204, 0.15);
+}
+
+/* =====================================================
+   GAYA FONT BACA
+   User bisa memilih antara Modern (Sans) dan Klasik (Serif).
+   ===================================================== */
+.reader-page.font-serif .reader-chapter-body,
+.reader-page.font-serif .narration,
+.reader-page.font-serif .dialogue .speech,
+.reader-page.font-serif .scene-setting {
     font-family: 'Merriweather', 'Georgia', serif;
 }
-.reader-page.font-sans .reader-chapter-body {
+.reader-page.font-sans .reader-chapter-body,
+.reader-page.font-sans .narration,
+.reader-page.font-sans .dialogue .speech,
+.reader-page.font-sans .scene-setting {
     font-family: 'Outfit', sans-serif;
 }
-.reader-page.size-sm .reader-chapter-body { font-size: 0.875rem; line-height: 1.8; }
-.reader-page.size-md .reader-chapter-body { font-size: 1rem; line-height: 2; }
-.reader-page.size-lg .reader-chapter-body { font-size: 1.25rem; line-height: 2.2; }
 
+/* =====================================================
+   UKURAN TEKS BACA
+   Tiga pilihan: Kecil (sm), Sedang (md), Besar (lg).
+   Mempengaruhi seluruh area baca, termasuk dialog & narasi.
+   ===================================================== */
+
+/* Kecil: teks ringkas, cocok untuk layar kecil */
+.reader-page.size-sm .reader-chapter-body,
+.reader-page.size-sm .narration,
+.reader-page.size-sm .dialogue .speech,
+.reader-page.size-sm .scene-setting { font-size: 0.9rem; line-height: 1.8; }
+.reader-page.size-sm .reader-chapter-title { font-size: 1.5rem; }
+.reader-page.size-sm .dialogue .speaker { font-size: 0.75rem; }
+.reader-page.size-sm .character-intro .char-name { font-size: 1.1rem; }
+.reader-page.size-sm .character-intro .char-desc { font-size: 0.85rem; }
+
+/* Sedang: ukuran default, paling nyaman */
+.reader-page.size-md .reader-chapter-body,
+.reader-page.size-md .narration,
+.reader-page.size-md .dialogue .speech,
+.reader-page.size-md .scene-setting { font-size: 1.05rem; line-height: 2; }
+.reader-page.size-md .reader-chapter-title { font-size: 1.8rem; }
+.reader-page.size-md .dialogue .speaker { font-size: 0.85rem; }
+.reader-page.size-md .character-intro .char-name { font-size: 1.3rem; }
+.reader-page.size-md .character-intro .char-desc { font-size: 0.95rem; }
+
+/* Besar: teks besar, cocok untuk membaca santai */
+.reader-page.size-lg .reader-chapter-body,
+.reader-page.size-lg .narration,
+.reader-page.size-lg .dialogue .speech,
+.reader-page.size-lg .scene-setting { font-size: 1.3rem; line-height: 2.3; }
+.reader-page.size-lg .reader-chapter-title { font-size: 2.2rem; }
+.reader-page.size-lg .dialogue .speaker { font-size: 0.95rem; }
+.reader-page.size-lg .character-intro .char-name { font-size: 1.5rem; }
+.reader-page.size-lg .character-intro .char-desc { font-size: 1.1rem; }
+
+/* =====================================================
+   READER SETTINGS DROPDOWN
+   Panel pengaturan baca (tema, font, ukuran).
+   Muncul saat tombol gear/font ditekan.
+   ===================================================== */
 .reader-settings-dropdown {
-    position: absolute; top: 100%; right: 2rem; background: var(--bg-card);
-    border: 1px solid var(--border-color); border-radius: var(--radius-md);
-    box-shadow: var(--shadow-md); padding: 1.5rem; z-index: 600;
-    min-width: 250px; display: none; margin-top: 0.5rem;
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-md);
+    padding: 1.5rem;
+    z-index: 600;
+    min-width: 260px;
+    max-width: 320px;
+    display: none;
+    margin-top: 0.5rem;
 }
 .reader-settings-dropdown.show { display: block; }
+
+/* Grup pengaturan individual (Tema, Font, Ukuran) */
 .setting-group { margin-bottom: 1.2rem; }
 .setting-group:last-child { margin-bottom: 0; }
-.setting-group label { display: block; font-size: 0.85rem; font-weight: 600; color: var(--text-muted); margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 1px; }
-.setting-options { display: flex; gap: 0.5rem; }
+/* Label pengaturan (uppercase, kecil) */
+.setting-group label {
+    display: block; font-size: 0.8rem; font-weight: 600;
+    color: var(--text-muted); margin-bottom: 0.5rem;
+    text-transform: uppercase; letter-spacing: 1px;
+}
+/* Container tombol-tombol pilihan */
+.setting-options { display: flex; gap: 0.4rem; flex-wrap: wrap; }
+
+/* Tombol pilihan individual (Terang/Gelap/Sepia/Neon, dst) */
 .setting-btn {
-    flex: 1; padding: 0.5rem; border: 1px solid var(--border-color);
+    flex: 1; padding: 0.45rem 0.3rem; border: 1px solid var(--border-color);
     background: var(--bg-main); color: var(--text-main); border-radius: var(--radius-sm);
-    cursor: pointer; font-size: 0.85rem; font-family: 'Outfit', sans-serif;
+    cursor: pointer; font-size: 0.8rem; font-family: 'Outfit', sans-serif;
     transition: var(--transition); text-align: center; font-weight: 600;
+    min-width: 0; white-space: nowrap;
 }
 .setting-btn:hover { border-color: var(--primary-light); color: var(--primary-color); }
+/* Tombol pilihan yang aktif/terpilih */
 .setting-btn.active { background: var(--primary-color); color: white; border-color: var(--primary-color); }
+
+/* =====================================================
+   RESPONSIVE — MOBILE (max-width: 768px)
+   ===================================================== */
+@media (max-width: 768px) {
+    /* Reader navbar: lebih compact */
+    .reader-navbar { padding: 0.6rem 0.8rem; }
+    /* Sembunyikan label "Kembali", hanya tampilkan icon panah */
+    .reader-back-btn span { display: none; }
+    .reader-back-btn { padding: 0.5rem 0.6rem; }
+    /* Judul chapter: lebih kecil */
+    .reader-title-mini { font-size: 0.85rem; max-width: 35%; }
+
+    /* Konten: padding lebih kecil */
+    .reader-content { padding: 2rem 1.2rem; }
+    .reader-chapter-title { font-size: 1.5rem; }
+    .reader-chapter-body { font-size: 1rem; }
+
+    /* Dialog: hilangkan segitiga dan margin kiri */
+    .dialogue { margin-left: 0; }
+    .dialogue::before { display: none; }
+    .narration { text-indent: 1rem; }
+
+    /* Navigasi chapter */
+    .reader-nav { padding: 0 1rem; gap: 0.5rem; }
+    .reader-nav a, .reader-nav span { padding: 0.5rem 0.8rem; font-size: 0.8rem; }
+
+    /* Settings dropdown: full width di mobile */
+    .reader-settings-dropdown {
+        right: -0.5rem;
+        min-width: 240px;
+        max-width: calc(100vw - 2rem);
+    }
+}
+
+/* =====================================================
+   RESPONSIVE — TABLET (769px — 1024px)
+   ===================================================== */
+@media (min-width: 769px) and (max-width: 1024px) {
+    .reader-content { padding: 2.5rem 1.5rem; }
+    .reader-chapter-title { font-size: 1.7rem; }
+}

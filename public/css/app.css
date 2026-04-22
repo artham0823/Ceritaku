@@ -1,19 +1,30 @@
 /* =====================================================
    CSS UTAMA: app.css
    =====================================================
-   Styling untuk halaman publik:
-   - Navbar, Sidebar, Hero Section
-   - Card cerita, Grid layout
-   - Footer, Story detail
-   - Genre filter, Search
-   - Anti-copy protection
-   - Dark/Light theme
+   Styling untuk seluruh halaman publik website Ceritaku.
+   
+   Bagian-bagian:
+   - Variabel warna (Light & Dark theme)
+   - Reset & Utilitas dasar
+   - Navbar (navigasi atas)
+   - Sidebar (menu samping mobile)
+   - Hero Section (banner utama)
+   - Card cerita & Grid layout
+   - Genre filter & Story detail
+   - Komentar, Request cerita
+   - Footer
+   - Tombol & komponen umum
+   - Responsive (mobile + tablet)
    ===================================================== */
 
-/* --- Impor Font Google --- */
+/* --- Impor Font Google (Outfit: font utama website) --- */
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
 
-/* --- Variabel Warna (Light Theme) --- */
+/* =====================================================
+   VARIABEL WARNA — LIGHT THEME (default)
+   Semua warna didefinisikan sebagai CSS custom properties
+   agar mudah diganti saat ganti tema (dark/neon/sepia).
+   ===================================================== */
 :root {
     --bg-main: #FFFDF9;
     --bg-card: #FFFFFF;
@@ -38,7 +49,10 @@
     --info: #3182ce;
 }
 
-/* --- Dark Theme --- */
+/* =====================================================
+   VARIABEL WARNA — DARK THEME
+   Aktif saat body memiliki class "dark-theme".
+   ===================================================== */
 body.dark-theme {
     --bg-main: #121212;
     --bg-card: #1E1E1E;
@@ -55,7 +69,11 @@ body.dark-theme {
     --shadow-hover: 0 15px 30px rgba(255, 183, 77, 0.1);
 }
 
-/* --- Reset --- */
+/* =====================================================
+   RESET & UTILITAS DASAR
+   Menghapus margin/padding bawaan browser dan
+   mengatur font, warna, dan overflow.
+   ===================================================== */
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
 body {
@@ -67,11 +85,18 @@ body {
     overflow-x: hidden;
 }
 
+/* Link: tanpa underline, transisi halus */
 a { text-decoration: none; color: inherit; transition: var(--transition); }
+/* List: tanpa bullet */
 ul { list-style: none; }
+/* Container: membatasi lebar konten maksimal */
 .container { max-width: 1280px; margin: 0 auto; padding: 0 2rem; }
 
-/* --- Anti-Copy (Cerita) --- */
+/* =====================================================
+   ANTI-COPY (Perlindungan Konten Cerita)
+   Mencegah user meng-copy teks cerita dengan
+   menonaktifkan select pada elemen .no-copy.
+   ===================================================== */
 .no-copy {
     user-select: none;
     -webkit-user-select: none;
@@ -79,7 +104,11 @@ ul { list-style: none; }
     -ms-user-select: none;
 }
 
-/* --- Toast/Alert --- */
+/* =====================================================
+   TOAST / ALERT NOTIFIKASI
+   Notifikasi pop-up yang muncul di pojok kanan atas.
+   Otomatis hilang setelah 4 detik.
+   ===================================================== */
 .toast {
     position: fixed;
     top: 1.5rem;
@@ -93,23 +122,31 @@ ul { list-style: none; }
     animation: slideInRight 0.4s ease, fadeOut 0.4s ease 4s forwards;
     max-width: 400px;
 }
+/* Variasi warna toast berdasarkan jenis pesan */
 .toast-success { background: var(--success); }
 .toast-error { background: var(--danger); }
 .toast-warning { background: var(--warning); }
 
+/* Animasi: masuk dari kanan */
 @keyframes slideInRight {
     from { transform: translateX(100%); opacity: 0; }
     to { transform: translateX(0); opacity: 1; }
 }
+/* Animasi: menghilang ke atas */
 @keyframes fadeOut {
     to { opacity: 0; transform: translateY(-20px); pointer-events: none; }
 }
+/* Animasi: muncul dari bawah (dipakai di card) */
 @keyframes fadeInUp {
     from { opacity: 0; transform: translateY(20px); }
     to { opacity: 1; transform: translateY(0); }
 }
 
-/* --- Navbar --- */
+/* =====================================================
+   NAVBAR (Navigasi Atas / Header)
+   Ditampilkan di semua halaman.
+   Berisi logo, menu desktop, search bar, dan tombol tema.
+   ===================================================== */
 .navbar {
     display: flex;
     justify-content: space-between;
@@ -123,6 +160,7 @@ ul { list-style: none; }
     transition: var(--transition);
 }
 
+/* Tombol hamburger (☰): hanya tampil di mobile */
 .hamburger-btn {
     display: none;
     background: none;
@@ -136,6 +174,7 @@ ul { list-style: none; }
 }
 .hamburger-btn:hover { color: var(--primary-color); background-color: var(--bg-accent); }
 
+/* Logo website */
 .logo {
     font-size: 1.5rem;
     font-weight: 700;
@@ -146,9 +185,11 @@ ul { list-style: none; }
     cursor: pointer;
 }
 
+/* Menu navigasi desktop (tersembunyi di mobile) */
 .desktop-nav ul { display: flex; gap: 2rem; }
 .desktop-nav a { font-weight: 500; position: relative; padding-bottom: 0.25rem; }
 .desktop-nav a:hover, .desktop-nav a.active { color: var(--primary-color); }
+/* Garis bawah orange untuk menu aktif */
 .desktop-nav a.active::after {
     content: '';
     position: absolute;
@@ -158,8 +199,10 @@ ul { list-style: none; }
     border-radius: 2px;
 }
 
+/* Area aksi di kanan navbar (search, tema, profil) */
 .nav-actions { display: flex; align-items: center; gap: 1.5rem; }
 
+/* Search bar di navbar */
 .search-bar { position: relative; display: flex; align-items: center; }
 .search-bar input {
     padding: 0.6rem 2.5rem 0.6rem 1rem;
@@ -176,6 +219,7 @@ ul { list-style: none; }
 .search-bar i { position: absolute; right: 1rem; color: var(--text-muted); pointer-events: none; top: 50%; transform: translateY(-50%); }
 .search-bar button { background: none; border: none; cursor: pointer; position: absolute; right: 0.5rem; top: 50%; transform: translateY(-50%); color: var(--text-muted); padding: 0.3rem; display: flex; align-items: center; justify-content: center; }
 
+/* Tombol toggle tema (bulan/matahari) */
 .theme-btn {
     background: none; border: none; color: var(--text-main);
     font-size: 1.25rem; cursor: pointer; transition: var(--transition);
@@ -183,11 +227,13 @@ ul { list-style: none; }
 }
 .theme-btn:hover { color: var(--primary-color); background-color: var(--bg-accent); }
 
+/* Foto profil user di navbar */
 .user-profile img {
     width: 40px; height: 40px; border-radius: 50%;
     object-fit: cover; border: 2px solid var(--primary-color); cursor: pointer;
 }
 
+/* Dropdown menu user (klik foto profil di navbar) */
 .nav-user-menu {
     position: relative;
     display: flex;
@@ -221,11 +267,18 @@ ul { list-style: none; }
 .nav-user-dropdown a:hover, .nav-user-dropdown button:hover {
     background-color: var(--bg-accent); color: var(--primary-color);
 }
+/* Garis pemisah di dalam dropdown */
 .nav-user-dropdown .divider {
     height: 1px; background: var(--border-color); margin: 0.3rem 0;
 }
 
-/* --- Sidebar (Mobile) --- */
+/* =====================================================
+   SIDEBAR (Menu Samping — Hanya Tampil di Mobile)
+   Muncul dari kiri saat hamburger button ditekan.
+   Backdrop gelap di belakangnya untuk overlay.
+   ===================================================== */
+
+/* Overlay gelap saat sidebar terbuka */
 .sidebar-backdrop {
     position: fixed; top: 0; left: 0; width: 100%; height: 100%;
     background-color: rgba(0, 0, 0, 0.5); z-index: 199;
@@ -234,6 +287,7 @@ ul { list-style: none; }
 }
 .sidebar-backdrop.active { opacity: 1; visibility: visible; }
 
+/* Panel sidebar */
 .sidebar {
     position: fixed; top: 0; left: 0; width: 280px; height: 100%;
     background-color: var(--bg-card); z-index: 200;
@@ -244,10 +298,12 @@ ul { list-style: none; }
 }
 .sidebar.active { transform: translateX(0); }
 
+/* Header sidebar: logo + tombol X tutup */
 .sidebar-header {
     display: flex; justify-content: space-between; align-items: center;
     padding: 1.2rem 1.5rem; border-bottom: 1px solid var(--border-color);
 }
+/* Tombol X untuk menutup sidebar */
 .sidebar-close-btn {
     background: none; border: none; color: var(--text-muted);
     font-size: 1.4rem; cursor: pointer; padding: 0.5rem;
@@ -255,7 +311,8 @@ ul { list-style: none; }
 }
 .sidebar-close-btn:hover { color: var(--primary-color); background-color: var(--bg-accent); }
 
-.sidebar-nav { flex: 1; padding: 1rem 0; }
+/* Navigasi di dalam sidebar */
+.sidebar-nav { flex: 1; padding: 1rem 0; overflow-y: auto; }
 .sidebar-nav ul { display: flex; flex-direction: column; }
 .sidebar-nav a {
     display: flex; align-items: center; gap: 0.8rem;
@@ -263,11 +320,13 @@ ul { list-style: none; }
     transition: var(--transition); border-left: 3px solid transparent;
 }
 .sidebar-nav a:hover { background-color: var(--bg-accent); color: var(--primary-color); }
+/* Menu aktif di sidebar: garis kiri orange */
 .sidebar-nav a.active {
     color: var(--primary-color); background-color: var(--primary-glow);
     border-left-color: var(--primary-color);
 }
 
+/* Bagian bawah sidebar: tombol tema + profil */
 .sidebar-bottom {
     padding: 1rem 1.5rem; border-top: 1px solid var(--border-color);
     display: flex; flex-direction: column; gap: 0.8rem;
@@ -277,6 +336,7 @@ ul { list-style: none; }
     font-size: 1rem; padding: 0.8rem 1rem;
     border-radius: var(--radius-sm); width: 100%; text-align: left;
 }
+/* Link profil user di sidebar */
 .sidebar-profile {
     display: flex; align-items: center; gap: 0.8rem;
     padding: 0.8rem 1rem; border-radius: var(--radius-sm);
@@ -289,7 +349,11 @@ ul { list-style: none; }
 }
 .sidebar-profile span { font-weight: 500; }
 
-/* --- Hero Section --- */
+/* =====================================================
+   HERO SECTION (Banner Utama di Halaman Beranda)
+   Menampilkan cerita utama (featured story) dengan
+   gambar cover besar dan tombol "Baca Sekarang".
+   ===================================================== */
 .hero-section {
     position: relative; display: flex; align-items: center;
     justify-content: center; gap: 3rem; padding: 4rem;
@@ -303,12 +367,14 @@ ul { list-style: none; }
 }
 .hero-content { position: relative; z-index: 2; max-width: 50%; }
 
+/* Badge label "Cerita Utama" */
 .badge {
     display: inline-block; padding: 0.4rem 1rem;
     background-color: var(--primary-glow); color: var(--primary-color);
     border-radius: 20px; font-weight: 600; font-size: 0.85rem;
     margin-bottom: 1.5rem; letter-spacing: 0.5px; text-transform: uppercase;
 }
+/* Judul hero: gradient teks orange */
 .hero-content h1 {
     font-size: 3.5rem; line-height: 1.1; margin-bottom: 1rem; font-weight: 700;
     background: linear-gradient(90deg, var(--primary-dark), var(--primary-light));
@@ -317,6 +383,7 @@ ul { list-style: none; }
 }
 .hero-content p { font-size: 1.1rem; color: var(--text-muted); margin-bottom: 2rem; max-width: 90%; }
 
+/* Tombol "Baca Sekarang" */
 .read-btn {
     padding: 1rem 2rem;
     background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
@@ -328,6 +395,7 @@ ul { list-style: none; }
 }
 .read-btn:hover { transform: translateY(-3px); box-shadow: var(--shadow-hover); }
 
+/* Gambar cover cerita utama di hero */
 .hero-image-wrapper {
     position: relative; z-index: 2; width: 400px; height: 550px;
     border-radius: var(--radius-md); overflow: hidden;
@@ -341,24 +409,30 @@ ul { list-style: none; }
 }
 .hero-image-wrapper img { width: 100%; height: 100%; object-fit: cover; }
 
-/* --- Section Headers --- */
+/* =====================================================
+   SECTION HEADERS
+   Judul section dengan garis vertikal orange di kiri.
+   ===================================================== */
 .section-header {
     display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;
 }
 .section-header h2 {
     font-size: 1.8rem; font-weight: 600; position: relative; padding-left: 1rem;
 }
+/* Garis vertikal orange di kiri judul */
 .section-header h2::before {
     content: ''; position: absolute; left: 0; top: 50%;
     transform: translateY(-50%); width: 4px; height: 70%;
     background-color: var(--primary-color); border-radius: 2px;
 }
+/* Link "Lihat Semua" */
 .view-all {
     color: var(--primary-color); font-weight: 600; font-size: 0.95rem;
     cursor: pointer; transition: var(--transition);
 }
 .view-all:hover { color: var(--primary-dark); }
 
+/* Tombol sort/filter */
 .sort-btn {
     background: none; border: 1px solid var(--border-color);
     color: var(--text-main); padding: 0.5rem 1rem; border-radius: 20px;
@@ -367,13 +441,17 @@ ul { list-style: none; }
 }
 .sort-btn:hover { border-color: var(--primary-color); color: var(--primary-color); }
 
-/* --- Grid Layouts --- */
+/* =====================================================
+   GRID LAYOUT — CHAPTER CARDS
+   Grid untuk menampilkan daftar chapter di halaman utama.
+   ===================================================== */
 .main-story-chapters { margin-top: 4rem; }
 
 .chapters-grid {
     display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
     gap: 1.5rem; margin-bottom: 30px;
 }
+/* Card individual chapter */
 .chapter-card {
     background-color: var(--bg-card); border: 1px solid var(--border-color);
     border-radius: var(--radius-sm); padding: 1.5rem;
@@ -390,6 +468,7 @@ ul { list-style: none; }
     display: -webkit-box; -webkit-line-clamp: 3;
     -webkit-box-orient: vertical; overflow: hidden;
 }
+/* Tombol "Baca" di dalam card chapter */
 .chapter-card .chapter-read-btn, .btn-sm {
     align-self: flex-start; padding: 0.5rem 1.2rem;
     background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
@@ -404,7 +483,10 @@ ul { list-style: none; }
 
 .explore-section { margin-top: 5rem; margin-bottom: 5rem; }
 
-/* --- Genre Filters --- */
+/* =====================================================
+   GENRE FILTERS (Pill Buttons)
+   Tombol-tombol filter genre cerita di halaman explore.
+   ===================================================== */
 .genre-filters { display: flex; flex-wrap: wrap; gap: 0.8rem; margin-bottom: 2rem; }
 .genre-pill {
     padding: 0.5rem 1.2rem; border-radius: 20px; background-color: var(--bg-card);
@@ -414,40 +496,54 @@ ul { list-style: none; }
     text-decoration: none;
 }
 .genre-pill:hover { border-color: var(--primary-light); color: var(--primary-color); }
+/* Genre pill yang aktif/terpilih */
 .genre-pill.active {
     background-color: var(--primary-color); color: white;
     border-color: var(--primary-color); box-shadow: 0 4px 10px var(--primary-glow);
 }
 
-/* --- Story Cards --- */
+/* =====================================================
+   STORY CARDS (Card Cerita)
+   Grid card untuk menampilkan daftar cerita.
+   Setiap card berisi cover, judul, dan info meta.
+   ===================================================== */
 .profiles-grid {
     display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 2rem;
 }
+/* Card cerita */
 .story-card {
     display: flex; flex-direction: column; gap: 0.8rem;
     cursor: pointer; text-decoration: none; color: inherit;
 }
+/* Cover image cerita (rasio 2:3) */
 .story-cover {
     width: 100%; aspect-ratio: 2/3; border-radius: var(--radius-sm);
     overflow: hidden; position: relative; box-shadow: var(--shadow-sm);
     transition: var(--transition);
 }
 .story-cover img { width: 100%; height: 100%; object-fit: cover; transition: var(--transition); }
+/* Efek hover: card terangkat + gambar zoom in */
 .story-card:hover .story-cover { box-shadow: var(--shadow-hover); transform: translateY(-5px); }
 .story-card:hover .story-cover img { transform: scale(1.05); }
 .story-info { display: flex; flex-direction: column; gap: 0.3rem; }
+/* Judul cerita: potong teks jika terlalu panjang */
 .story-title {
     font-weight: 600; font-size: 1.05rem; white-space: nowrap;
     overflow: hidden; text-overflow: ellipsis;
 }
 .story-card:hover .story-title { color: var(--primary-color); }
+/* Info meta: jumlah chapter, views, likes */
 .story-meta {
     display: flex; align-items: center; gap: 1rem;
     font-size: 0.85rem; color: var(--text-muted);
 }
 .story-meta span { display: flex; align-items: center; gap: 0.3rem; }
 
-/* --- Story Detail --- */
+/* =====================================================
+   STORY DETAIL (Halaman Detail Cerita)
+   Layout untuk halaman detail satu cerita dengan
+   cover besar, info, dan daftar chapter.
+   ===================================================== */
 .back-btn {
     background: none; border: none; color: var(--text-muted);
     font-size: 1.1rem; font-weight: 500; cursor: pointer;
@@ -457,6 +553,7 @@ ul { list-style: none; }
 }
 .back-btn:hover { color: var(--primary-color); transform: translateX(-5px); }
 
+/* Header detail cerita: gambar + info */
 .story-detail-header {
     display: flex; gap: 3rem; margin-bottom: 4rem;
     background-color: var(--bg-card); padding: 2rem;
@@ -471,6 +568,7 @@ ul { list-style: none; }
 .detail-info h1 { font-size: 2.5rem; margin-top: 1rem; margin-bottom: 1rem; color: var(--primary-dark); }
 .detail-info p { font-size: 1.1rem; color: var(--text-muted); line-height: 1.8; }
 
+/* Tombol aksi (Like, Favorit) */
 .story-actions {
     display: flex; gap: 1rem; margin-top: 1.5rem; flex-wrap: wrap;
 }
@@ -484,10 +582,14 @@ ul { list-style: none; }
 .btn-like:hover, .btn-favorite:hover {
     border-color: var(--primary-color); color: var(--primary-color);
 }
+/* Status aktif (sudah di-like/favorit) */
 .btn-like.active { background: #ff6b6b; color: white; border-color: #ff6b6b; }
 .btn-favorite.active { background: var(--primary-color); color: white; border-color: var(--primary-color); }
 
-/* --- Request Cerita (Footer Section) --- */
+/* =====================================================
+   REQUEST CERITA (Section di atas footer)
+   Form untuk user mengirim permintaan cerita baru.
+   ===================================================== */
 .request-section {
     background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
     padding: 3rem 0; margin-top: 3rem;
@@ -511,10 +613,14 @@ ul { list-style: none; }
 }
 .request-form button:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
 
-/* --- Comment Section --- */
+/* =====================================================
+   KOMENTAR SECTION
+   Area komentar di halaman baca chapter.
+   ===================================================== */
 .comment-section { margin-top: 3rem; }
 .comment-section h3 { font-size: 1.3rem; margin-bottom: 1.5rem; }
 
+/* Form tulis komentar */
 .comment-form { margin-bottom: 2rem; }
 .comment-form textarea {
     width: 100%; padding: 1rem; border: 1px solid var(--border-color);
@@ -527,8 +633,10 @@ ul { list-style: none; }
 .comment-form .comment-actions {
     display: flex; justify-content: space-between; align-items: center; margin-top: 0.8rem;
 }
+/* Sisa komentar hari ini */
 .comment-remaining { font-size: 0.85rem; color: var(--text-muted); }
 
+/* Item komentar individual */
 .comment-item {
     display: flex; gap: 1rem; padding: 1.2rem;
     background: var(--bg-card); border: 1px solid var(--border-color);
@@ -536,19 +644,22 @@ ul { list-style: none; }
     transition: var(--transition);
 }
 .comment-item:hover { border-color: var(--primary-light); }
+/* Avatar komentar */
 .comment-avatar {
     width: 42px; height: 42px; border-radius: 50%;
     object-fit: cover; flex-shrink: 0;
 }
 .comment-body { flex: 1; }
-.comment-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.3rem; }
+.comment-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.3rem; flex-wrap: wrap; gap: 0.3rem; }
 .comment-name { font-weight: 600; font-size: 0.95rem; }
+/* Badge role di komentar */
 .comment-role { font-size: 0.75rem; padding: 0.15rem 0.5rem; border-radius: 10px; font-weight: 600; }
 .comment-role.author { background: var(--primary-glow); color: var(--primary-color); }
 .comment-role.admin { background: rgba(49,130,206,0.1); color: var(--info); }
 .comment-role.member { background: rgba(56,161,105,0.1); color: var(--success); }
 .comment-date { font-size: 0.8rem; color: var(--text-muted); }
 .comment-text { font-size: 0.95rem; line-height: 1.6; margin-top: 0.3rem; }
+/* Tombol hapus komentar */
 .comment-delete {
     background: none; border: none; color: var(--text-muted);
     cursor: pointer; font-size: 0.85rem; transition: var(--transition);
@@ -556,6 +667,7 @@ ul { list-style: none; }
 }
 .comment-delete:hover { color: var(--danger); }
 
+/* Prompt login (jika belum login) */
 .login-prompt {
     text-align: center; padding: 2rem;
     background: var(--bg-accent); border-radius: var(--radius-sm);
@@ -566,7 +678,10 @@ ul { list-style: none; }
     text-decoration: underline;
 }
 
-/* --- Footer --- */
+/* =====================================================
+   FOOTER (Bagian Bawah Website)
+   Berisi branding, link navigasi, dan kontak author.
+   ===================================================== */
 #main-footer {
     background-color: var(--bg-card); border-top: 1px solid var(--border-color);
     padding: 4rem 0 2rem 0; margin-top: auto;
@@ -578,7 +693,7 @@ ul { list-style: none; }
 .footer-brand { max-width: 300px; }
 .footer-brand i { font-size: 1.8rem; color: var(--primary-color); margin-bottom: 1rem; }
 .footer-brand p { color: var(--text-muted); font-size: 0.95rem; }
-.footer-links { display: flex; gap: 4rem; }
+.footer-links { display: flex; gap: 4rem; flex-wrap: wrap; }
 .footer-links ul { display: flex; flex-direction: column; gap: 0.8rem; }
 .footer-links strong { font-size: 1.1rem; margin-bottom: 0.5rem; display: inline-block; }
 .footer-links a { color: var(--text-muted); font-size: 0.95rem; }
@@ -589,30 +704,41 @@ ul { list-style: none; }
     color: var(--text-muted); font-size: 0.9rem;
 }
 
+/* Elemen khusus desktop */
 .desktop-only { display: flex; }
 
-/* --- Buttons --- */
+/* =====================================================
+   TOMBOL UMUM (Buttons)
+   Berbagai variasi tombol yang dipakai di seluruh site.
+   ===================================================== */
 .btn {
     padding: 0.7rem 1.5rem; border-radius: 25px; font-weight: 600;
     font-size: 0.95rem; cursor: pointer; display: inline-flex;
     align-items: center; gap: 0.5rem; transition: var(--transition);
     font-family: 'Outfit', sans-serif; border: none; text-decoration: none;
 }
+/* Tombol primary (orange) */
 .btn-primary {
     background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
     color: #fff;
 }
 .btn-primary:hover { transform: translateY(-2px); box-shadow: var(--shadow-hover); }
+/* Tombol outline (transparan + border) */
 .btn-outline {
     background: transparent; border: 2px solid var(--border-color);
     color: var(--text-main);
 }
 .btn-outline:hover { border-color: var(--primary-color); color: var(--primary-color); }
+/* Tombol bahaya/hapus (merah) */
 .btn-danger { background: var(--danger); color: white; }
 .btn-danger:hover { opacity: 0.9; }
+/* Tombol sukses (hijau) */
 .btn-success { background: var(--success); color: white; }
 
-/* --- Empty State --- */
+/* =====================================================
+   EMPTY STATE (Keadaan Kosong)
+   Ditampilkan ketika tidak ada data.
+   ===================================================== */
 .empty-state {
     text-align: center; padding: 3rem;
     color: var(--text-muted);
@@ -620,7 +746,9 @@ ul { list-style: none; }
 .empty-state i { font-size: 3rem; margin-bottom: 1rem; opacity: 0.5; }
 .empty-state p { font-size: 1.1rem; }
 
-/* --- Pagination --- */
+/* =====================================================
+   PAGINATION (Navigasi Halaman)
+   ===================================================== */
 .pagination {
     display: flex; justify-content: center; gap: 0.5rem;
     margin-top: 2rem; flex-wrap: wrap;
@@ -636,16 +764,61 @@ ul { list-style: none; }
     background: var(--primary-color); color: white; border-color: var(--primary-color);
 }
 
-/* --- RESPONSIVE --- */
+/* =====================================================
+   SOSIAL MEDIA LINKS (Profil Publik)
+   Menampilkan icon sosmed kecil-kecil berjajar horizontal.
+   Jika tidak muat, otomatis lanjut ke baris bawah.
+   ===================================================== */
+.social-links-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    justify-content: center;
+    margin-top: 1rem;
+}
+/* Item sosmed individual: icon kecil + label */
+.social-link-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.3rem 0.7rem;
+    background: var(--bg-accent);
+    border: 1px solid var(--border-color);
+    border-radius: 20px;
+    font-size: 0.8rem;
+    color: var(--text-main);
+    transition: var(--transition);
+    text-decoration: none;
+    white-space: nowrap;
+}
+.social-link-item:hover {
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+    transform: translateY(-1px);
+}
+.social-link-item i {
+    font-size: 0.85rem;
+    color: var(--primary-color);
+}
+
+/* =====================================================
+   RESPONSIVE — MOBILE (max-width: 768px)
+   Penyesuaian layout untuk layar kecil (HP).
+   ===================================================== */
 @media (max-width: 768px) {
+    /* Tampilkan tombol hamburger, sembunyikan nav desktop */
     .hamburger-btn { display: flex; }
     .desktop-nav { display: none; }
     .desktop-logo { display: none; }
     .desktop-only { display: none !important; }
+
+    /* Navbar: lebih compact */
     .navbar { padding: 0.8rem 1rem; gap: 0.5rem; }
     .search-bar input { width: 100%; min-width: 0; }
     .nav-actions { flex: 1; gap: 0.8rem; }
     .search-bar { flex: 1; }
+
+    /* Hero: stack vertikal, teks tengah */
     .hero-section { flex-direction: column; padding: 3rem 1.5rem; gap: 2rem; text-align: center; }
     .hero-content { max-width: 100%; }
     .hero-content h1 { font-size: 2.2rem; }
@@ -653,17 +826,72 @@ ul { list-style: none; }
     .hero-content .read-btn { margin: 0 auto; }
     .hero-image-wrapper { width: 100%; max-width: 300px; height: 400px; transform: none; }
     .hero-image-wrapper:hover { transform: translateY(-10px); }
+
+    /* Story detail: stack vertikal */
     .story-detail-header { flex-direction: column; gap: 2rem; padding: 1.5rem; }
     .story-detail-header img { width: 100%; max-width: 300px; margin: 0 auto; }
     .detail-info h1 { font-size: 1.8rem; }
+
+    /* Story cards: tampilkan 2 kolom, max 6 card */
+    .profiles-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+    }
     .profiles-grid .story-card:nth-child(n+7) { display: none; }
+
+    /* Chapter grid: 1 kolom */
     .chapters-grid { grid-template-columns: 1fr; }
+
+    /* Container: padding lebih kecil */
     .container { padding: 0 1rem; }
     .section-header h2 { font-size: 1.4rem; }
-    .footer-links { gap: 2rem; }
+
+    /* Footer: gap lebih kecil, column layout */
+    .footer-content { flex-direction: column; gap: 2rem; }
+    .footer-links { gap: 2rem; flex-wrap: wrap; }
     .request-form { flex-direction: column; }
+
+    /* Komentar: header wrap */
+    .comment-header { flex-direction: column; align-items: flex-start; gap: 0.2rem; }
+
+    /* Toast: full width di mobile */
+    .toast { left: 1rem; right: 1rem; max-width: none; }
 }
 
+/* =====================================================
+   RESPONSIVE — TABLET (769px — 1024px)
+   Breakpoint menengah agar transisi desktop ke mobile
+   tidak terlalu mendadak.
+   ===================================================== */
+@media (min-width: 769px) and (max-width: 1024px) {
+    /* Navbar: padding lebih kecil */
+    .navbar { padding: 1rem 2rem; }
+
+    /* Hero: gap dan padding lebih kecil */
+    .hero-section { padding: 3rem 2rem; gap: 2rem; }
+    .hero-content h1 { font-size: 2.5rem; }
+    .hero-image-wrapper { width: 300px; height: 420px; }
+
+    /* Story cards: 3 kolom di tablet */
+    .profiles-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1.5rem;
+    }
+
+    /* Footer links: gap lebih kecil */
+    .footer-links { gap: 2.5rem; }
+
+    /* Search bar: lebih kecil */
+    .search-bar input { width: 180px; }
+
+    /* Story detail: gambar lebih kecil */
+    .story-detail-header img { width: 200px; height: 280px; }
+    .detail-info h1 { font-size: 2rem; }
+}
+
+/* =====================================================
+   DESKTOP ONLY — Sembunyikan sidebar di desktop
+   ===================================================== */
 @media (min-width: 769px) {
     .sidebar, .sidebar-backdrop { display: none !important; }
 }

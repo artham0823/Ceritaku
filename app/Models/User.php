@@ -182,4 +182,22 @@ class User extends Authenticatable
     {
         return $this->hasMany(Notification::class);
     }
+
+    /** Link sosial media / game ID user ini */
+    public function socialLinks()
+    {
+        return $this->hasMany(SocialLink::class)->orderBy('sort_order');
+    }
+
+    /**
+     * Batas maksimal link sosmed yang bisa ditambahkan.
+     * Member: 10, Admin & Author: tanpa batas (unlimited).
+     */
+    public function getSocialLinksLimit(): int
+    {
+        if ($this->isAuthor() || $this->isAdmin()) {
+            return PHP_INT_MAX; // Tanpa batas
+        }
+        return 10; // Member max 10
+    }
 }

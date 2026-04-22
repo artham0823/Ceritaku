@@ -1,33 +1,70 @@
+{{-- =====================================================
+     HALAMAN BACA CHAPTER (Reader)
+     =====================================================
+     Halaman immersive untuk membaca cerita.
+     
+     Fitur:
+     - Pengaturan tema (Terang/Gelap/Sepia/Neon)
+     - Pengaturan font (Modern/Klasik)
+     - Pengaturan ukuran teks (Kecil/Sedang/Besar)
+     - Navigasi chapter (prev/next)
+     - Watermark username (anti-screenshot)
+     - Reaksi emoji & komentar
+     - Mode fullscreen (klik area baca)
+     ===================================================== --}}
+
 @extends('layouts.app')
 @section('title', $chapter->title . ' - ' . $story->title)
 @push('styles')
 <link rel="stylesheet" href="{{ asset('css/reader.css') }}">
 @endpush
 
+{{-- Sembunyikan section request cerita di halaman baca --}}
 @php $hideRequest = true; @endphp
 
 @section('content')
 <div class="reader-page">
-    {{-- Reader Navbar --}}
+    {{-- ============================================
+         READER NAVBAR
+         Navigasi atas saat membaca: kembali, judul,
+         progress, dan tombol pengaturan baca.
+         ============================================ --}}
     <header class="reader-navbar" style="position: relative;">
+        {{-- Tombol kembali ke halaman detail cerita --}}
         <a href="{{ route('story.show', $story->id) }}" class="reader-back-btn">
             <i class="fa-solid fa-arrow-left"></i>
             <span>Kembali</span>
         </a>
+
+        {{-- Judul chapter mini di tengah --}}
         <div class="reader-title-mini">{{ $chapter->title }}</div>
         
-        <div style="display:flex; gap:1rem; align-items:center;">
+        {{-- Area kanan: progress + tombol pengaturan --}}
+        <div style="display:flex; gap:0.8rem; align-items:center; flex-shrink:0;">
+            {{-- Label progress chapter --}}
             <span class="reader-progress">{{ $chapter->chapter_number }} / {{ $story->chapters->count() }}</span>
-            <button id="reader-settings-btn" style="background:none; border:none; color:var(--text-main); font-size:1.2rem; cursor:pointer;" aria-label="Pengaturan Baca"><i class="fa-solid fa-font"></i></button>
+
+            {{-- Tombol buka pengaturan baca --}}
+            <button id="reader-settings-btn" style="background:none; border:none; color:var(--text-main); font-size:1.2rem; cursor:pointer; padding:0.3rem;" aria-label="Pengaturan Baca">
+                <i class="fa-solid fa-font"></i>
+            </button>
+
+            {{-- ============================================
+                 DROPDOWN PENGATURAN BACA
+                 Tema background, gaya font, ukuran teks.
+                 ============================================ --}}
             <div class="reader-settings-dropdown" id="reader-settings-dropdown">
+                {{-- Pilihan tema --}}
                 <div class="setting-group">
                     <label>Tema Background</label>
                     <div class="setting-options">
                         <button class="setting-btn" data-setting="theme" data-value="light">Terang</button>
                         <button class="setting-btn" data-setting="theme" data-value="sepia">Sepia</button>
                         <button class="setting-btn" data-setting="theme" data-value="dark">Gelap</button>
+                        <button class="setting-btn" data-setting="theme" data-value="neon">Neon</button>
                     </div>
                 </div>
+                {{-- Pilihan gaya font --}}
                 <div class="setting-group">
                     <label>Gaya Font</label>
                     <div class="setting-options">
@@ -35,6 +72,7 @@
                         <button class="setting-btn" data-setting="font" data-value="serif">Klasik</button>
                     </div>
                 </div>
+                {{-- Pilihan ukuran teks --}}
                 <div class="setting-group">
                     <label>Ukuran Teks</label>
                     <div class="setting-options">
@@ -47,6 +85,11 @@
         </div>
     </header>
 
+    {{-- ============================================
+         WATERMARK USERNAME
+         Overlay transparan berisi username user yang login.
+         Untuk mencegah screenshot & share tanpa izin.
+         ============================================ --}}
     @auth
     <div class="dynamic-watermark" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 5; pointer-events: none; overflow: hidden; opacity: 0.04; display: flex; flex-wrap: wrap; justify-content: center; align-items: center; color: var(--text-main); font-size: 2.2rem; font-weight: bold; transform: rotate(-30deg) scale(1.5);">
         @for($i=0; $i<60; $i++)
@@ -55,7 +98,11 @@
     </div>
     @endauth
 
-    {{-- Reader Content (Anti-copy) --}}
+    {{-- ============================================
+         KONTEN CERITA (Anti-copy)
+         Area utama teks cerita. Di-protect dari
+         salin dan klik kanan.
+         ============================================ --}}
     <div class="reader-content no-copy">
         <div class="reader-chapter-title">{{ $chapter->title }}</div>
         <div class="reader-chapter-body">
@@ -63,7 +110,11 @@
         </div>
     </div>
 
-    {{-- Navigation --}}
+    {{-- ============================================
+         NAVIGASI CHAPTER (Prev / Next)
+         Tombol untuk pindah ke chapter sebelumnya
+         atau selanjutnya.
+         ============================================ --}}
     <div class="reader-nav">
         @if($prevChapter)
             <a href="{{ route('chapter.show', [$story->id, $prevChapter->id]) }}" class="nav-prev">
@@ -84,13 +135,20 @@
         @endif
     </div>
 
-    {{-- Reaction Section --}}
+    {{-- ============================================
+         REAKSI EMOJI
+         User bisa memberikan reaksi pada chapter
+         (Suka, Cinta, Lucu, Kaget, Sedih).
+         Hanya user yang login yang bisa bereaksi.
+         ============================================ --}}
     <div class="container" style="max-width:750px; margin: 3rem auto 1rem; text-align: center; position: relative; z-index: 10;">
         <h4 style="margin-bottom: 1rem; color: var(--text-muted); font-weight: 500;">Bagaimana perasaan Anda tentang bab ini?</h4>
         <div class="reactions-container" style="display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap;">
             @php
+                // Ambil reaksi user saat ini (jika sudah login)
                 $userReaction = auth()->check() ? \App\Models\ChapterReaction::where('chapter_id', $chapter->id)->where('user_id', auth()->id())->value('reaction_type') : null;
                 
+                // Daftar reaksi yang tersedia
                 $reactions = [
                     'like' => ['icon' => '👍', 'label' => 'Suka'],
                     'love' => ['icon' => '❤️', 'label' => 'Cinta'],
@@ -99,6 +157,7 @@
                     'cry' => ['icon' => '😭', 'label' => 'Sedih']
                 ];
 
+                // Hitung jumlah reaksi per tipe
                 $reactionCounts = \App\Models\ChapterReaction::selectRaw('reaction_type, count(*) as count')
                     ->where('chapter_id', $chapter->id)
                     ->groupBy('reaction_type')
@@ -119,12 +178,17 @@
         </div>
     </div>
 
-    {{-- Comment Section --}}
+    {{-- ============================================
+         KOMENTAR SECTION
+         User bisa menulis dan melihat komentar.
+         Limit komentar per hari tergantung level user.
+         ============================================ --}}
     <div class="container" style="max-width:750px;margin:2rem auto;padding-bottom:3rem">
         <div class="comment-section">
             <h3><i class="fa-solid fa-comments"></i> Komentar ({{ $comments->count() }})</h3>
 
             @auth
+                {{-- Cek apakah user masih bisa berkomentar hari ini --}}
                 @if(auth()->user()->canComment())
                     <div class="comment-form">
                         <form action="{{ route('comment.store') }}" method="POST">
@@ -140,24 +204,29 @@
                         </form>
                     </div>
                 @else
+                    {{-- Limit komentar tercapai --}}
                     <div class="login-prompt">
                         <p>Anda sudah mencapai batas komentar hari ini. Coba lagi besok!</p>
                     </div>
                 @endif
             @else
+                {{-- Belum login --}}
                 <div class="login-prompt">
                     <p><a href="{{ route('login') }}">Login</a> atau <a href="{{ route('register') }}">buat akun</a> untuk berkomentar.</p>
                 </div>
             @endauth
 
+            {{-- Daftar komentar --}}
             @foreach($comments as $comment)
                 <div class="comment-item">
+                    {{-- Avatar komentar (klik untuk ke profil) --}}
                     <a href="{{ route('profile.show', $comment->user->id) }}">
                         <img src="{{ asset($comment->user->avatar ?? 'img/p2.jpg') }}" alt="" class="comment-avatar">
                     </a>
                     <div class="comment-body">
                         <div class="comment-header">
                             <div>
+                                {{-- Nama user + badge role + badge level --}}
                                 <a href="{{ route('profile.show', $comment->user->id) }}" class="comment-name" style="text-decoration: none; color: inherit; transition: color 0.3s; display: inline-block;">{{ $comment->user->name }}</a>
                                 <span class="comment-role {{ $comment->user->role }}">{{ ucfirst($comment->user->role) }}</span>
                                 @if($comment->user->isMember())
@@ -167,6 +236,7 @@
                             <span class="comment-date">{{ $comment->created_at->diffForHumans() }}</span>
                         </div>
                         <p class="comment-text">{{ $comment->content }}</p>
+                        {{-- Tombol hapus komentar (hanya tampil jika punya hak) --}}
                         @auth
                             @if(
                                 auth()->user()->isAuthor() ||
@@ -183,6 +253,7 @@
                 </div>
             @endforeach
 
+            {{-- Pesan jika belum ada komentar --}}
             @if($comments->isEmpty())
                 <div class="empty-state">
                     <p>Belum ada komentar. Jadilah yang pertama!</p>
@@ -192,6 +263,11 @@
     </div>
 </div>
 
+{{-- ============================================
+     JAVASCRIPT READER
+     Mengelola: pengaturan baca, sinkronisasi tema
+     dengan tema global, mode fullscreen.
+     ============================================ --}}
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const readerPage = document.querySelector('.reader-page');
@@ -199,43 +275,57 @@
         const settingsDropdown = document.getElementById('reader-settings-dropdown');
         const settingBtns = document.querySelectorAll('.setting-btn');
 
-        // Toggle dropdown
+        // ============================================
+        // TOGGLE DROPDOWN PENGATURAN
+        // Buka/tutup panel pengaturan saat tombol diklik.
+        // ============================================
         settingsBtn.addEventListener('click', (e) => {
             e.stopPropagation();
             settingsDropdown.classList.toggle('show');
         });
 
-        // Click outside to close
+        // Tutup dropdown saat klik di luar
         document.addEventListener('click', (e) => {
             if (!settingsDropdown.contains(e.target) && e.target !== settingsBtn) {
                 settingsDropdown.classList.remove('show');
             }
         });
 
-        // Load settings from localStorage
+        // ============================================
+        // MUAT PENGATURAN DARI LOCAL STORAGE
+        // Ambil pengaturan yang tersimpan, atau gunakan
+        // default berdasarkan tema global saat ini.
+        // ============================================
         const globalTheme = localStorage.getItem('ceritaku-theme');
-        const defaults = { theme: globalTheme === 'dark' ? 'dark' : 'light', font: 'sans', size: 'md' };
+        const defaults = {
+            theme: globalTheme === 'dark' ? 'dark' : 'light',
+            font: 'sans',
+            size: 'md'
+        };
+
         let savedSettings = JSON.parse(localStorage.getItem('readerSettings'));
         if (!savedSettings) {
             savedSettings = defaults;
-        } else {
-            // Sinkronisasi tema global dengan tema reader jika bertabrakan
-            if (globalTheme === 'dark' && savedSettings.theme !== 'dark') savedSettings.theme = 'dark';
-            else if (globalTheme === 'light' && savedSettings.theme === 'dark') savedSettings.theme = 'light';
         }
 
-        // Fullscreen reading mode (hide navbars on click)
+        // ============================================
+        // MODE FULLSCREEN (Sembunyikan Navbar)
+        // Klik area baca untuk sembunyikan/tampilkan
+        // navbar. Tidak berlaku jika mengklik tombol,
+        // link, form, komentar, dll.
+        // ============================================
         const mainNavbar = document.getElementById('main-navbar');
         const readerNavbarLocal = document.querySelector('.reader-navbar');
         
         document.addEventListener('click', (e) => {
+            // Jangan toggle jika klik di navbar
             if (mainNavbar && mainNavbar.contains(e.target)) return;
             if (readerNavbarLocal && readerNavbarLocal.contains(e.target)) return;
             
-            // Jangan hide jika mengklik tombol, link, form, area komentar, setting, atau interaksi lainnya
+            // Jangan toggle jika klik elemen interaktif
             if (e.target.closest('button, a, input, textarea, form, .comment-section, .reactions-container, .reader-settings-dropdown')) return;
 
-            // Toggle sembunyikan navbar
+            // Toggle sembunyikan/tampilkan navbar
             const isHidden = document.body.classList.toggle('hide-navs');
             if (isHidden) {
                 if (mainNavbar) mainNavbar.style.display = 'none';
@@ -246,23 +336,65 @@
             }
         });
 
-        // Note: For 'dark' theme, we use body dark-theme. For 'sepia', we apply to reader-page.
+        // ============================================
+        // TERAPKAN PENGATURAN BACA
+        // Fungsi ini menerapkan tema, font, dan ukuran
+        // ke halaman reader, serta menyinkronkan tema
+        // global (dark/light) termasuk icon-nya.
+        // ============================================
         function applySettings(settings) {
-            // Apply Theme
+            // --- Terapkan Tema ---
+            // Hapus semua class tema dari reader
+            readerPage.classList.remove('theme-sepia', 'theme-neon');
             document.body.classList.remove('dark-theme');
-            readerPage.classList.remove('theme-sepia');
-            if (settings.theme === 'dark') document.body.classList.add('dark-theme');
-            else if (settings.theme === 'sepia') readerPage.classList.add('theme-sepia');
 
-            // Apply Font
+            if (settings.theme === 'dark') {
+                // Gelap: aktifkan dark-theme di body (tema global)
+                document.body.classList.add('dark-theme');
+                document.body.classList.remove('light-theme');
+                // Sinkronkan tema global
+                if (typeof window.setTheme === 'function') {
+                    window.setTheme('dark');
+                } else {
+                    localStorage.setItem('ceritaku-theme', 'dark');
+                }
+            } else if (settings.theme === 'sepia') {
+                // Sepia: hanya reader yang berubah, body tetap light
+                readerPage.classList.add('theme-sepia');
+                document.body.classList.add('light-theme');
+                localStorage.setItem('ceritaku-theme', 'light');
+                if (typeof window.updateThemeIcons === 'function') {
+                    window.updateThemeIcons(false);
+                }
+            } else if (settings.theme === 'neon') {
+                // Neon: reader berubah neon + body jadi dark
+                readerPage.classList.add('theme-neon');
+                document.body.classList.add('dark-theme');
+                document.body.classList.remove('light-theme');
+                // Simpan sebagai dark di global
+                localStorage.setItem('ceritaku-theme', 'dark');
+                if (typeof window.updateThemeIcons === 'function') {
+                    window.updateThemeIcons(true);
+                }
+            } else {
+                // Terang: tema light biasa
+                document.body.classList.add('light-theme');
+                if (typeof window.setTheme === 'function') {
+                    window.setTheme('light');
+                } else {
+                    localStorage.setItem('ceritaku-theme', 'light');
+                }
+            }
+
+            // --- Terapkan Font ---
             readerPage.classList.remove('font-sans', 'font-serif');
             readerPage.classList.add('font-' + settings.font);
 
-            // Apply Size
+            // --- Terapkan Ukuran Teks ---
             readerPage.classList.remove('size-sm', 'size-md', 'size-lg');
             readerPage.classList.add('size-' + settings.size);
 
-            // Update Active Buttons
+            // --- Update Tombol Aktif di Dropdown ---
             settingBtns.forEach(btn => {
                 const setting = btn.getAttribute('data-setting');
                 const val = btn.getAttribute('data-value');
@@ -274,15 +406,22 @@
             });
         }
 
+        // Terapkan pengaturan yang tersimpan
         applySettings(savedSettings);
 
-        // Handle Setting Changes
+        // ============================================
+        // HANDLE PERUBAHAN PENGATURAN
+        // Saat user klik salah satu tombol pengaturan,
+        // simpan pilihan dan terapkan langsung.
+        // ============================================
         settingBtns.forEach(btn => {
             btn.addEventListener('click', function() {
                 const setting = this.getAttribute('data-setting');
                 const val = this.getAttribute('data-value');
                 savedSettings[setting] = val;
+                // Simpan ke localStorage
                 localStorage.setItem('readerSettings', JSON.stringify(savedSettings));
+                // Terapkan perubahan
                 applySettings(savedSettings);
             });
         });

@@ -74,6 +74,10 @@ Route::middleware('auth')->group(function () {
     // Profil
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
+
+    // Sosial Media / Game ID (tambah & hapus link sosmed di profil)
+    Route::post('/profile/social', [ProfileController::class, 'storeSocialLink'])->name('profile.social.store');
+    Route::delete('/profile/social/{id}', [ProfileController::class, 'destroySocialLink'])->name('profile.social.destroy');
 });
 
 // =============================================

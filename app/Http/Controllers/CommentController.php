@@ -45,13 +45,17 @@ class CommentController extends Controller
             return back()->with('error', "Anda sudah mencapai batas komentar hari ini. Sisa: {$remaining}");
         }
 
+        // Simpan komentar baru ke database
+        // Data yang disimpan: ID user yang komentar, ID chapter, dan isi komentar
         $comment = Comment::create([
             'user_id' => auth()->id(),
             'chapter_id' => $request->chapter_id,
             'content' => $request->content,
         ]);
 
-        // Notifikasi ke author
+        // Kirim notifikasi ke author (penulis cerita)
+        // Agar author tahu ada komentar baru masuk.
+        // Isi notifikasi berisi nama komentator + 50 karakter pertama komentar.
         $author = User::where('role', 'author')->first();
         if ($author) {
             Notification::createForUser(

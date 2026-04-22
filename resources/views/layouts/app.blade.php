@@ -9,9 +9,14 @@
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
     @stack('styles')
 </head>
+{{-- Body: class awal "light-theme", bisa berubah via JS --}}
 <body class="light-theme">
 
-    {{-- Toast Notifications --}}
+    {{-- ============================================
+         TOAST NOTIFICATIONS
+         Notifikasi pop-up yang muncul ketika ada
+         pesan sukses atau error dari server.
+         ============================================ --}}
     @if(session('success'))
         <div class="toast toast-success" id="toast">{{ session('success') }}</div>
     @endif
@@ -19,9 +24,17 @@
         <div class="toast toast-error" id="toast">{{ session('error') }}</div>
     @endif
 
-    {{-- Sidebar Overlay (untuk mobile) --}}
+    {{-- ============================================
+         SIDEBAR (Menu Samping — Mobile Only)
+         Muncul dari kiri saat hamburger ditekan.
+         Berisi: logo, navigasi, toggle tema, profil.
+         ============================================ --}}
+
+    {{-- Overlay gelap di belakang sidebar --}}
     <div class="sidebar-backdrop" id="sidebar-backdrop"></div>
+
     <aside class="sidebar" id="sidebar">
+        {{-- Header sidebar: logo + tombol X tutup --}}
         <div class="sidebar-header">
             <a href="{{ route('home') }}" class="logo">
                 <i class="fa-solid fa-book-open"></i> Ceritaku
@@ -30,6 +43,8 @@
                 <i class="fa-solid fa-xmark"></i>
             </button>
         </div>
+
+        {{-- Navigasi sidebar: menu yang sama dengan desktop --}}
         <nav class="sidebar-nav">
             <ul>
                 @php $navItems = \App\Models\NavbarItem::active()->get(); @endphp
@@ -42,16 +57,21 @@
                 @endforeach
             </ul>
         </nav>
+
+        {{-- Bagian bawah sidebar: toggle tema + profil --}}
         <div class="sidebar-bottom">
+            {{-- Tombol toggle tema (gelap/terang) di sidebar --}}
             <button id="sidebar-theme-toggle" class="theme-btn" aria-label="Toggle Theme">
                 <i class="fa-solid fa-moon"></i> <span>Mode Gelap</span>
             </button>
             @auth
+                {{-- Jika sudah login: tampilkan foto + nama --}}
                 <a href="{{ route('dashboard') }}" class="sidebar-profile">
                     <img src="{{ asset(auth()->user()->avatar ?? 'img/p2.jpg') }}" alt="Profile">
                     <span>{{ auth()->user()->name }}</span>
                 </a>
             @else
+                {{-- Jika belum login: tampilkan link masuk --}}
                 <a href="{{ route('login') }}" class="sidebar-profile">
                     <i class="fa-solid fa-right-to-bracket" style="font-size:1.2rem;color:var(--primary-color)"></i>
                     <span>Masuk</span>
@@ -60,14 +80,24 @@
         </div>
     </aside>
 
-    {{-- Header Navigation --}}
+    {{-- ============================================
+         HEADER NAVIGATION (Navbar Utama)
+         Tampil di semua halaman.
+         Berisi: hamburger (mobile), logo, menu desktop,
+         search bar, toggle tema, profil user.
+         ============================================ --}}
     <header class="navbar" id="main-navbar">
+        {{-- Tombol hamburger: toggle sidebar di mobile --}}
         <button class="hamburger-btn" id="hamburger-btn" aria-label="Menu">
             <i class="fa-solid fa-bars"></i>
         </button>
+
+        {{-- Logo desktop --}}
         <a href="{{ route('home') }}" class="logo desktop-logo">
             <i class="fa-solid fa-book-open"></i> Ceritaku
         </a>
+
+        {{-- Menu navigasi desktop --}}
         <nav class="desktop-nav">
             <ul>
                 @foreach($navItems as $nav)
@@ -79,15 +109,22 @@
                 @endforeach
             </ul>
         </nav>
+
+        {{-- Area aksi di kanan navbar --}}
         <div class="nav-actions">
+            {{-- Search bar --}}
             <form action="{{ route('search') }}" method="GET" class="search-bar">
                 <input type="text" name="q" placeholder="Cari cerita favoritmu..." value="{{ request('q') }}">
                 <button type="submit"><i class="fa-solid fa-search"></i></button>
             </form>
+
+            {{-- Tombol toggle tema (bulan/matahari) — desktop only --}}
             <button id="theme-toggle" class="theme-btn desktop-only" aria-label="Toggle Theme">
                 <i class="fa-solid fa-moon"></i>
             </button>
+
             @auth
+                {{-- Menu profil user (dropdown) — desktop only --}}
                 <div class="nav-user-menu desktop-only">
                     <div class="user-profile">
                         <img src="{{ asset(auth()->user()->avatar ?? 'img/p2.jpg') }}" alt="Profile">
@@ -103,6 +140,7 @@
                     </div>
                 </div>
             @else
+                {{-- Tombol masuk — desktop only --}}
                 <a href="{{ route('login') }}" class="btn btn-primary desktop-only" style="padding:0.5rem 1.2rem;font-size:0.9rem">
                     <i class="fa-solid fa-right-to-bracket"></i> Masuk
                 </a>
@@ -110,10 +148,18 @@
         </div>
     </header>
 
-    {{-- Main Content --}}
+    {{-- ============================================
+         KONTEN UTAMA
+         Di-inject oleh masing-masing halaman
+         menggunakan @yield('content').
+         ============================================ --}}
     @yield('content')
 
-    {{-- Request Cerita Section (di atas footer) --}}
+    {{-- ============================================
+         REQUEST CERITA SECTION (di atas footer)
+         Form untuk user mengirim permintaan cerita baru.
+         Disembunyikan di halaman baca chapter.
+         ============================================ --}}
     @if(!isset($hideRequest))
     <section class="request-section">
         <div class="container">
@@ -133,7 +179,10 @@
     </section>
     @endif
 
-    {{-- Footer --}}
+    {{-- ============================================
+         FOOTER
+         Branding, link navigasi, kontak author.
+         ============================================ --}}
     <footer id="main-footer">
         <div class="container footer-content">
             <div class="footer-brand">
@@ -175,19 +224,34 @@
         </div>
     </footer>
 
-    {{-- Anti-Copy & Theme & Sidebar JS --}}
+    {{-- ============================================
+         JAVASCRIPT UTAMA
+         Mengatur: tema (dark/light), sidebar, dropdown,
+         anti-copy, toast auto-remove.
+         ============================================ --}}
     <script>
-        // Theme toggle
+        // ============================================
+        // TEMA (DARK/LIGHT) — Fungsi Global
+        // Fungsi ini dibuat global (window.*) agar bisa
+        // dipanggil dari halaman reader juga.
+        // ============================================
+
         const themeBtn = document.getElementById('theme-toggle');
         const sidebarThemeBtn = document.getElementById('sidebar-theme-toggle');
         const body = document.body;
 
+        // Muat tema yang tersimpan di localStorage
         const savedTheme = localStorage.getItem('ceritaku-theme');
         if (savedTheme === 'dark') {
             body.classList.replace('light-theme', 'dark-theme');
             updateThemeIcons(true);
         }
 
+        /**
+         * Toggle tema antara light dan dark.
+         * Menyimpan pilihan ke localStorage agar bertahan
+         * saat halaman di-refresh.
+         */
         function toggleTheme() {
             const isDark = body.classList.contains('light-theme');
             if (isDark) {
@@ -200,6 +264,12 @@
             updateThemeIcons(isDark);
         }
 
+        /**
+         * Update icon tema di semua tempat:
+         * - Tombol di navbar desktop (bulan/matahari)
+         * - Tombol di sidebar mobile (bulan/matahari + teks)
+         * @param {boolean} isDark - true jika sekarang mode gelap
+         */
         function updateThemeIcons(isDark) {
             if (themeBtn) {
                 const icon = themeBtn.querySelector('i');
@@ -213,23 +283,85 @@
             }
         }
 
+        /**
+         * Set tema ke nilai tertentu (dipanggil dari reader).
+         * @param {string} theme - 'dark' atau 'light'
+         */
+        function setTheme(theme) {
+            if (theme === 'dark') {
+                body.classList.remove('light-theme');
+                body.classList.add('dark-theme');
+                localStorage.setItem('ceritaku-theme', 'dark');
+                updateThemeIcons(true);
+            } else {
+                body.classList.remove('dark-theme');
+                body.classList.add('light-theme');
+                localStorage.setItem('ceritaku-theme', 'light');
+                updateThemeIcons(false);
+            }
+        }
+
+        // Jadikan fungsi global agar bisa diakses dari reader.blade.php
+        window.updateThemeIcons = updateThemeIcons;
+        window.toggleTheme = toggleTheme;
+        window.setTheme = setTheme;
+
+        // Pasang event listener pada tombol-tombol tema
         if (themeBtn) themeBtn.addEventListener('click', toggleTheme);
         if (sidebarThemeBtn) sidebarThemeBtn.addEventListener('click', toggleTheme);
 
-        // Sidebar
+        // ============================================
+        // SIDEBAR (Menu Samping Mobile)
+        // Bisa dibuka/ditutup dengan:
+        // 1. Tombol hamburger (☰) — toggle buka/tutup
+        // 2. Tombol X di dalam sidebar
+        // 3. Klik area gelap (backdrop)
+        // ============================================
+
         const hamburgerBtn = document.getElementById('hamburger-btn');
         const sidebar = document.getElementById('sidebar');
         const sidebarBackdrop = document.getElementById('sidebar-backdrop');
         const sidebarCloseBtn = document.getElementById('sidebar-close-btn');
 
-        function openSidebar() { sidebar.classList.add('active'); sidebarBackdrop.classList.add('active'); body.style.overflow = 'hidden'; }
-        function closeSidebar() { sidebar.classList.remove('active'); sidebarBackdrop.classList.remove('active'); body.style.overflow = ''; }
+        /** Buka sidebar dan tampilkan backdrop */
+        function openSidebar() {
+            sidebar.classList.add('active');
+            sidebarBackdrop.classList.add('active');
+            body.style.overflow = 'hidden'; // Kunci scroll halaman
+        }
 
-        if (hamburgerBtn) hamburgerBtn.addEventListener('click', openSidebar);
+        /** Tutup sidebar dan sembunyikan backdrop */
+        function closeSidebar() {
+            sidebar.classList.remove('active');
+            sidebarBackdrop.classList.remove('active');
+            body.style.overflow = ''; // Kembalikan scroll
+        }
+
+        /**
+         * Toggle sidebar: jika terbuka → tutup, jika tertutup → buka.
+         * Dipasang pada tombol hamburger.
+         */
+        function toggleSidebar() {
+            if (sidebar.classList.contains('active')) {
+                closeSidebar();
+            } else {
+                openSidebar();
+            }
+        }
+
+        // Hamburger: toggle buka/tutup sidebar
+        if (hamburgerBtn) hamburgerBtn.addEventListener('click', toggleSidebar);
+        // Tombol X: tutup sidebar
         if (sidebarCloseBtn) sidebarCloseBtn.addEventListener('click', closeSidebar);
+        // Klik backdrop: tutup sidebar
         if (sidebarBackdrop) sidebarBackdrop.addEventListener('click', closeSidebar);
 
-        // Profile Dropdown Toggle
+        // ============================================
+        // DROPDOWN PROFIL USER (Desktop — Navbar)
+        // Klik foto profil untuk buka/tutup dropdown.
+        // Klik di luar dropdown untuk menutup.
+        // ============================================
+
         const profileImg = document.querySelector('.nav-user-menu img');
         const userDropdown = document.querySelector('.nav-user-dropdown');
         if (profileImg && userDropdown) {
@@ -244,7 +376,12 @@
             });
         }
 
-        // Anti-copy pada area cerita
+        // ============================================
+        // ANTI-COPY (Perlindungan Konten Cerita)
+        // Mencegah klik kanan, salin teks, dan shortcut
+        // keyboard pada elemen dengan class .no-copy.
+        // ============================================
+
         document.querySelectorAll('.no-copy').forEach(el => {
             el.addEventListener('contextmenu', e => e.preventDefault());
             el.addEventListener('copy', e => e.preventDefault());
@@ -257,9 +394,14 @@
             }
         });
 
-        // Auto-remove toast
+        // ============================================
+        // TOAST AUTO-REMOVE
+        // Hapus notifikasi toast otomatis setelah 5 detik.
+        // ============================================
         setTimeout(() => { const t = document.getElementById('toast'); if(t) t.remove(); }, 5000);
     </script>
+
+    {{-- Stack untuk script tambahan dari halaman anak --}}
     @stack('scripts')
 </body>
 </html>
