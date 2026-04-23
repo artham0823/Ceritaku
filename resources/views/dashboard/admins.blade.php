@@ -40,32 +40,32 @@
         <tbody>
             @forelse($admins as $admin)
                 <tr>
-                    <td><strong><a href="{{ route('profile.show', $admin->id) }}" style="text-decoration:none; color:inherit;">{{ $admin->name }}</a></strong></td>
-                    <td>
+                    <td data-label="Nama"><strong><a href="{{ route('profile.show', $admin->id) }}" style="text-decoration:none; color:inherit;">{{ $admin->name }}</a></strong></td>
+                    <td data-label="Status">
                         @if($admin->is_blocked)
                             <span class="status-badge status-blocked">Diblokir</span>
                         @else
                             <span class="status-badge status-active">Aktif</span>
                         @endif
                     </td>
-                    <td><small>{{ $admin->created_at->format('d M Y') }}</small></td>
-                    <td>
+                    <td data-label="Bergabung"><small>{{ $admin->created_at->format('d M Y') }}</small></td>
+                    <td data-label="Aksi">
                         <div class="actions">
-                            <form action="{{ route('dashboard.users.block', $admin->id) }}" method="POST">
+                            <form action="{{ route('dashboard.users.block', $admin->id) }}" method="POST" style="margin:0;">
                                 @csrf @method('PUT')
                                 <button type="submit" class="{{ $admin->is_blocked ? 'btn-edit' : 'btn-delete' }}">
-                                    <i class="fa-solid {{ $admin->is_blocked ? 'fa-lock-open' : 'fa-ban' }}"></i>
+                                    <i class="fa-solid {{ $admin->is_blocked ? 'fa-lock-open' : 'fa-ban' }}"></i> {{ $admin->is_blocked ? 'Buka' : 'Blokir' }}
                                 </button>
                             </form>
-                            <form action="{{ route('dashboard.admins.destroy', $admin->id) }}" method="POST" onsubmit="return confirm('Hapus admin ini?')">
+                            <form action="{{ route('dashboard.admins.destroy', $admin->id) }}" method="POST" onsubmit="return confirm('Hapus admin ini?')" style="margin:0;">
                                 @csrf @method('DELETE')
-                                <button type="submit" class="btn-delete"><i class="fa-solid fa-trash"></i></button>
+                                <button type="submit" class="btn-delete"><i class="fa-solid fa-trash"></i> Hapus</button>
                             </form>
                         </div>
                     </td>
                 </tr>
             @empty
-                <tr><td colspan="5" class="empty-state">Belum ada admin.</td></tr>
+                <tr><td colspan="4" class="empty-state" style="display: block; text-align: center;">Belum ada admin.</td></tr>
             @endforelse
         </tbody>
     </table>

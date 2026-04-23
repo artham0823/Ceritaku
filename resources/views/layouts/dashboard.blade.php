@@ -95,15 +95,18 @@
             </div>
         </aside>
 
+        {{-- Sidebar Overlay (click to close sidebar on mobile) --}}
+        <div class="dash-sidebar-overlay" id="dash-sidebar-overlay"></div>
+
         {{-- Dashboard Content --}}
         <main class="dash-content">
             @yield('content')
         </main>
     </div>
 
-    {{-- Mobile sidebar toggle --}}
-    <button class="dash-mobile-toggle" id="dash-mobile-toggle">
-        <i class="fa-solid fa-bars"></i>
+    {{-- Mobile sidebar toggle (left side) --}}
+    <button class="dash-mobile-toggle" id="dash-mobile-toggle" aria-label="Toggle Menu">
+        <i class="fa-solid fa-bars" id="toggle-icon"></i>
     </button>
 
     <script>
@@ -111,14 +114,63 @@
         const saved = localStorage.getItem('ceritaku-theme');
         if (saved === 'dark') document.body.classList.replace('light-theme', 'dark-theme');
 
-        // Mobile sidebar
-        const toggle = document.getElementById('dash-mobile-toggle');
-        const dashSidebar = document.getElementById('dash-sidebar');
-        if (toggle) {
-            toggle.addEventListener('click', () => {
-                dashSidebar.classList.toggle('active');
+        // Mobile sidebar toggle with overlay
+        (function() {
+            const toggle = document.getElementById('dash-mobile-toggle');
+            const dashSidebar = document.getElementById('dash-sidebar');
+            const overlay = document.getElementById('dash-sidebar-overlay');
+            const toggleIcon = document.getElementById('toggle-icon');
+
+            function openSidebar() {
+                dashSidebar.classList.add('active');
+                overlay.classList.add('active');
+                if (toggleIcon) {
+                    toggleIcon.classList.remove('fa-bars');
+                    toggleIcon.classList.add('fa-xmark');
+                }
+            }
+
+            function closeSidebar() {
+                dashSidebar.classList.remove('active');
+                overlay.classList.remove('active');
+                if (toggleIcon) {
+                    toggleIcon.classList.remove('fa-xmark');
+                    toggleIcon.classList.add('fa-bars');
+                }
+            }
+
+            if (toggle) {
+                toggle.addEventListener('click', () => {
+                    if (dashSidebar.classList.contains('active')) {
+                        closeSidebar();
+                    } else {
+                        openSidebar();
+                    }
+                });
+            }
+
+            // Close sidebar when clicking overlay
+            if (overlay) {
+                overlay.addEventListener('click', closeSidebar);
+            }
+
+            // Close sidebar on ESC key
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && dashSidebar.classList.contains('active')) {
+                    closeSidebar();
+                }
             });
-        }
+
+            // Close sidebar when a nav link is clicked (on mobile)
+            const navLinks = dashSidebar.querySelectorAll('.dash-sidebar-nav a');
+            navLinks.forEach(link => {
+                link.addEventListener('click', () => {
+                    if (window.innerWidth <= 768) {
+                        closeSidebar();
+                    }
+                });
+            });
+        })();
 
         // Auto-remove toast
         setTimeout(() => { const t = document.getElementById('toast'); if(t) t.remove(); }, 5000);

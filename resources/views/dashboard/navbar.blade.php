@@ -43,16 +43,16 @@
         <tbody>
             @foreach($navbarItems as $item)
                 <tr>
-                    <td>{{ $item->sort_order }}</td>
-                    <td><strong>{{ $item->label }}</strong></td>
-                    <td><code>{{ $item->url }}</code></td>
-                    <td><i class="{{ $item->icon }}"></i> {{ $item->icon }}</td>
-                    <td><span class="status-badge {{ $item->is_active ? 'status-active' : 'status-blocked' }}">{{ $item->is_active ? 'Aktif' : 'Nonaktif' }}</span></td>
-                    <td>
+                    <td data-label="Urutan">{{ $item->sort_order }}</td>
+                    <td data-label="Label"><strong>{{ $item->label }}</strong></td>
+                    <td data-label="URL"><code>{{ $item->url }}</code></td>
+                    <td data-label="Icon"><i class="{{ $item->icon }}"></i> {{ $item->icon }}</td>
+                    <td data-label="Status"><span class="status-badge {{ $item->is_active ? 'status-active' : 'status-blocked' }}">{{ $item->is_active ? 'Aktif' : 'Nonaktif' }}</span></td>
+                    <td data-label="Aksi">
                         <div class="actions">
-                            <form action="{{ route('dashboard.navbar.destroy', $item->id) }}" method="POST" onsubmit="return confirm('Hapus navbar ini?')">
+                            <form action="{{ route('dashboard.navbar.destroy', $item->id) }}" method="POST" onsubmit="return confirm('Hapus navbar ini?')" style="margin:0;">
                                 @csrf @method('DELETE')
-                                <button type="submit" class="btn-delete"><i class="fa-solid fa-trash"></i></button>
+                                <button type="submit" class="btn-delete"><i class="fa-solid fa-trash"></i> Hapus</button>
                             </form>
                         </div>
                     </td>

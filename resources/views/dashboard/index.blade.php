@@ -50,11 +50,11 @@
 @if($user->isAuthor())
 <div class="dash-card" style="margin-top: 1rem;">
     <h3 style="margin-bottom: 1.5rem;"><i class="fa-solid fa-chart-pie"></i> Analisis Data Ceritaku</h3>
-    <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 2rem; align-items: start;">
-        <div style="position: relative; height: 300px; width: 100%;">
+    <div class="charts-grid">
+        <div class="chart-container">
             <canvas id="readingChart"></canvas>
         </div>
-        <div style="position: relative; height: 300px; width: 100%;">
+        <div class="chart-container">
             <canvas id="genreChart"></canvas>
         </div>
     </div>
@@ -206,7 +206,7 @@ document.addEventListener('DOMContentLoaded', function() {
         </div>
     </div>
 
-    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-top: 2rem;">
+    <div class="member-bottom-grid">
         <div class="dash-card">
             <h3><i class="fa-solid fa-comment-dots"></i> Komentar Terakhir Saya</h3>
             @forelse($userComments as $comment)

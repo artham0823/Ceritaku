@@ -12,34 +12,36 @@
         <tbody>
             @forelse($requests as $req)
                 <tr>
-                    <td><strong>{{ $req->user->name }}</strong></td>
-                    <td>{{ $req->title }}</td>
-                    <td>{{ Str::limit($req->description, 100) }}</td>
-                    <td>
+                    <td data-label="Pengguna"><strong>{{ $req->user->name }}</strong></td>
+                    <td data-label="Judul Request">{{ $req->title }}</td>
+                    <td data-label="Deskripsi">{{ Str::limit($req->description, 100) }}</td>
+                    <td data-label="Status">
                         <span class="status-badge status-{{ $req->status }}">
                             {{ $req->status === 'pending' ? 'Menunggu' : ($req->status === 'approved' ? 'Disetujui' : 'Ditolak') }}
                         </span>
                     </td>
-                    <td><small>{{ $req->created_at->format('d M Y') }}</small></td>
-                    <td>
+                    <td data-label="Tanggal"><small>{{ $req->created_at->format('d M Y') }}</small></td>
+                    <td data-label="Aksi">
                         @if($req->status === 'pending')
                         <div class="actions">
-                            <form action="{{ route('dashboard.requests.update', $req->id) }}" method="POST">
+                            <form action="{{ route('dashboard.requests.update', $req->id) }}" method="POST" style="margin:0;">
                                 @csrf @method('PUT')
                                 <input type="hidden" name="status" value="approved">
-                                <button type="submit" class="btn-edit"><i class="fa-solid fa-check"></i></button>
+                                <button type="submit" class="btn-edit"><i class="fa-solid fa-check"></i> Setujui</button>
                             </form>
-                            <form action="{{ route('dashboard.requests.update', $req->id) }}" method="POST">
+                            <form action="{{ route('dashboard.requests.update', $req->id) }}" method="POST" style="margin:0;">
                                 @csrf @method('PUT')
                                 <input type="hidden" name="status" value="rejected">
-                                <button type="submit" class="btn-delete"><i class="fa-solid fa-xmark"></i></button>
+                                <button type="submit" class="btn-delete"><i class="fa-solid fa-xmark"></i> Tolak</button>
                             </form>
                         </div>
+                        @else
+                            -
                         @endif
                     </td>
                 </tr>
             @empty
-                <tr><td colspan="6" class="empty-state">Belum ada request cerita.</td></tr>
+                <tr><td colspan="6" class="empty-state" style="display: block; text-align: center;">Belum ada request cerita.</td></tr>
             @endforelse
         </tbody>
     </table>
