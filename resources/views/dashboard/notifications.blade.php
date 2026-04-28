@@ -26,6 +26,8 @@
             <p>Belum ada notifikasi.</p>
         </div>
     @endforelse
-    <div class="pagination">{{ $notifications->links() }}</div>
+    <div style="margin-top: 1.5rem;">
+        {{ $notifications->links('vendor.pagination.custom') }}
+    </div>
 </div>
 @endsection
