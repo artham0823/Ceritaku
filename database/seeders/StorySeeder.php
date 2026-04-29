@@ -121,7 +121,8 @@ class StorySeeder extends Seeder
         Chapter::create([
             'story_id' => $story->id,
             'title' => 'Bab 1: Awal Mula',
-            'content' => '<div class="chapter-content-rich"><div class="scene-setting">Kota Jakarta, pukul 06.00 pagi. Matahari baru saja menyembul dari balik gedung-gedung pencakar langit.</div><div class="narration">Rian berjalan menyusuri trotoar Jalan Sudirman dengan langkah gontai. Di tangannya tergenggam selembar kertas — surat penolakan kerja yang kesekian kalinya.</div></div>',
+            'content' => '<div class="chapter-content-rich"><div class="scene-setting">Kota Jakarta, pukul 06.00 pagi. 
+                            Matahari baru saja menyembul dari balik gedung-gedung pencakar langit.</div><div class="narration">Rian berjalan menyusuri trotoar Jalan Sudirman dengan langkah gontai. Di tangannya tergenggam selembar kertas — surat penolakan kerja yang kesekian kalinya.</div></div>',
             'chapter_number' => 1,
         ]);
 
